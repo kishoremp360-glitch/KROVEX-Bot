@@ -281,13 +281,15 @@ class BotRoleService(commands.Cog, name="Bot Role Management"):
                         await me.add_roles(role, reason="Assigning KROVEX dedicated bot role")
                         logger.info("Assigned role '%s' to KROVEX in guild '%s'.", role_name, guild.name)
                     else:
-                        logger.warning(
-                            "Cannot assign role '%s' to KROVEX in '%s': Role is higher than or equal to bot's top role.",
-                            role_name,
+                        logger.info(
+                            "Role hierarchy hold in '%s': Role '%s' (pos %d) >= bot top role (pos %d). Drag the bot's managed role above it in Server Settings -> Roles to enable full assignment.",
                             guild.name,
+                            role_name,
+                            role_pos,
+                            top_pos,
                         )
                 except (discord.Forbidden, discord.HTTPException) as err:
-                    logger.warning("Could not assign role '%s' to KROVEX in '%s': %s", role_name, guild.name, err)
+                    logger.debug("Could not assign role '%s' to KROVEX in '%s': %s", role_name, guild.name, err)
 
             active_roles.append(role)
 
@@ -354,6 +356,22 @@ class BotRoleService(commands.Cog, name="Bot Role Management"):
                 logger.info("Restored unremovable role(s) %s to KROVEX in '%s'.", [r.name for r in to_restore], after.guild.name)
             except Exception as re_err:
                 logger.warning("Could not restore removed role to KROVEX: %s", re_err)
+
+    @commands.Cog.listener()
+    async def on_guild_role_update(self, before: discord.Role, after: discord.Role) -> None:
+        """Automatically complete role assignment when an admin elevates the bot's role hierarchy in Server Settings."""
+        guild = after.guild
+        me = getattr(guild, "me", None)
+        if not me:
+            return
+
+        # If a role belonging to the bot had its position elevated
+        if after in getattr(me, "roles", []) and after.position > before.position:
+            logger.info("Bot role '%s' position elevated to %d in '%s'. Re-checking dedicated roles...", after.name, after.position, guild.name)
+            try:
+                await self.setup_bot_roles(guild)
+            except Exception as e:
+                logger.debug("Failed auto-sync on role elevation in %s: %s", guild.id, e)
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role: discord.Role) -> None:
