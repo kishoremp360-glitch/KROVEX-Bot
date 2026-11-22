@@ -190,6 +190,11 @@ class Music(commands.Cog, name="Music System"):
         if started:
             source_suffix = f" *(via {track.source_info.source_provider.capitalize()})*" if track.source_info.original_source == "spotify" else ""
             await ctx.send_success("Now Playing", f"Playing **[{track.title}]({track.uri})**{source_suffix}.")
+        elif pos == 0:
+            await ctx.send_error(
+                "Playback Error",
+                f"Could not start playback for **[{track.title}]({track.uri})**. The audio stream failed to initialize or was rejected."
+            )
         else:
             embed = EmbedBuilder.base(
                 title="🎵 Track Enqueued",

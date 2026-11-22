@@ -4,9 +4,13 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import re
+import tempfile
+import time
 import urllib.parse
 import urllib.request
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import yt_dlp
@@ -67,6 +71,11 @@ class ExtractionTimeoutError(ResolverError):
     pass
 
 
+class YouTubeBotChallengeError(ResolverError):
+    """Raised when YouTube issues a bot verification / datacenter anti-bot challenge."""
+    pass
+
+
 class AudioResolver:
     """Intelligent audio resolver utilizing yt-dlp with non-blocking concurrency and ranking."""
 
@@ -74,8 +83,18 @@ class AudioResolver:
         self,
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
+        cookie_path: Optional[str] = None,
+        cookies_content: Optional[str] = None,
+        po_token: Optional[str] = None,
+        visitor_data: Optional[str] = None,
     ) -> None:
         self.spotify_client = SpotifyClient(client_id=client_id, client_secret=client_secret)
+        self.cookie_path = cookie_path
+        self.cookies_content = cookies_content
+        self.po_token = po_token
+        self.visitor_data = visitor_data
+        self._temp_cookie_file: Optional[str] = None
+
         self.ydl_opts: Dict[str, Any] = {
             "format": "bestaudio/best",
             "noplaylist": True,
@@ -94,6 +113,150 @@ class AudioResolver:
                 }
             },
         }
+
+    def _validate_and_get_cookie_file(self) -> Optional[str]:
+        """Validate or create cookie file path safely without exposing contents."""
+        # 1. Directly configured path
+        if self.cookie_path:
+            p = Path(self.cookie_path).resolve()
+            if p.is_file() and p.stat().st_size > 0:
+                logger.info("Using configured YouTube cookie file (%d bytes).", p.stat().st_size)
+                return str(p)
+
+        # 2. Project root cookies.txt
+        root_cookie = Path(__file__).resolve().parent.parent.parent.parent / "cookies.txt"
+        if root_cookie.is_file() and root_cookie.stat().st_size > 0:
+            logger.info("Detected project root cookies.txt (%d bytes).", root_cookie.stat().st_size)
+            return str(root_cookie)
+
+        # 3. Cookies content string (e.g. from environment variable)
+        if self.cookies_content and self.cookies_content.strip():
+            if not self._temp_cookie_file or not os.path.exists(self._temp_cookie_file):
+                try:
+                    tmp = tempfile.NamedTemporaryFile("w", delete=False, suffix=".txt", encoding="utf-8")
+                    tmp.write(self.cookies_content.strip())
+                    tmp.flush()
+                    tmp.close()
+                    # Secure permissions on POSIX systems
+                    try:
+                        os.chmod(tmp.name, 0o600)
+                    except Exception:
+                        pass
+                    self._temp_cookie_file = tmp.name
+                    logger.info("Wrote secure temporary cookie file (%d bytes).", len(self.cookies_content.encode("utf-8")))
+                except Exception as exc:
+                    logger.warning("Failed to create temporary cookie file: %s", exc)
+                    return None
+            return self._temp_cookie_file
+
+        return None
+
+    def _configure_po_token(self, ydl_opts: Dict[str, Any]) -> None:
+        """Inject PO Token parameters into extractor args safely without exposing token in logs."""
+        if not self.po_token or not self.po_token.strip():
+            return
+
+        token_clean = self.po_token.strip()
+        vis_clean = (self.visitor_data or "").strip()
+
+        if "extractor_args" not in ydl_opts:
+            ydl_opts["extractor_args"] = {}
+        if "youtube" not in ydl_opts["extractor_args"]:
+            ydl_opts["extractor_args"]["youtube"] = {}
+
+        # Format po_token for yt-dlp: web+<visitor_data>+<token> or web+<token>
+        if vis_clean:
+            formatted_po = f"web+{vis_clean}+{token_clean}"
+        else:
+            formatted_po = f"web+{token_clean}"
+
+        ydl_opts["extractor_args"]["youtube"]["po_token"] = [formatted_po]
+        logger.info("Configured YouTube PO Token provider integration.")
+
+    def _search_audius(self, query: str) -> Optional[Dict[str, Any]]:
+        """Search Audius decentralized streaming network as a resilient fallback."""
+        try:
+            encoded_q = urllib.parse.quote(query)
+            api_url = f"https://discoveryprovider.audius.co/v1/tracks/search?query={encoded_q}&app_name=KROVEX"
+            req = urllib.request.Request(api_url, headers={"User-Agent": "KROVEX-Bot/1.0", "Accept": "application/json"})
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+
+            tracks = data.get("data", [])
+            if not tracks:
+                return None
+
+            entries: List[Dict[str, Any]] = []
+            for t in tracks[:5]:
+                track_id = t.get("id")
+                title = t.get("title")
+                user = t.get("user", {})
+                artist = user.get("name") or user.get("handle") or "Audius Artist"
+                duration = t.get("duration", 0)
+                artwork = t.get("artwork", {})
+                thumbnail = artwork.get("1000x1000") or artwork.get("480x480") or artwork.get("150x150")
+
+                if track_id and title:
+                    stream_url = f"https://discoveryprovider.audius.co/v1/tracks/{track_id}/stream?app_name=KROVEX"
+                    webpage_url = f"https://audius.co/tracks/{track_id}"
+                    entries.append({
+                        "id": str(track_id),
+                        "title": title,
+                        "url": stream_url,
+                        "webpage_url": webpage_url,
+                        "uploader": artist,
+                        "channel": artist,
+                        "duration": duration,
+                        "thumbnail": thumbnail,
+                        "extractor": "audius",
+                    })
+
+            if entries:
+                return {"_type": "playlist", "entries": entries}
+        except Exception as exc:
+            logger.debug("Audius search fallback failed for '%s': %s", query, exc)
+        return None
+
+    def _search_jamendo(self, query: str) -> Optional[Dict[str, Any]]:
+        """Search Jamendo open music database as a resilient fallback."""
+        try:
+            encoded_q = urllib.parse.quote(query)
+            api_url = f"https://api.jamendo.com/v3.0/tracks/?client_id=56d30c95&format=json&limit=5&namesearch={encoded_q}&include=musicinfo"
+            req = urllib.request.Request(api_url, headers={"User-Agent": "KROVEX-Bot/1.0", "Accept": "application/json"})
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+
+            results = data.get("results", [])
+            if not results:
+                return None
+
+            entries: List[Dict[str, Any]] = []
+            for t in results:
+                title = t.get("name")
+                artist = t.get("artist_name") or "Jamendo Artist"
+                duration = t.get("duration", 0)
+                stream_url = t.get("audio")
+                webpage_url = t.get("shareurl") or t.get("shorturl")
+                thumbnail = t.get("image")
+
+                if title and stream_url:
+                    entries.append({
+                        "id": str(t.get("id")),
+                        "title": title,
+                        "url": stream_url,
+                        "webpage_url": webpage_url or stream_url,
+                        "uploader": artist,
+                        "channel": artist,
+                        "duration": duration,
+                        "thumbnail": thumbnail,
+                        "extractor": "jamendo",
+                    })
+
+            if entries:
+                return {"_type": "playlist", "entries": entries}
+        except Exception as exc:
+            logger.debug("Jamendo search fallback failed for '%s': %s", query, exc)
+        return None
 
     @staticmethod
     def is_url(query: str) -> bool:
@@ -364,9 +527,16 @@ class AudioResolver:
         return None
 
     def _extract_sync(self, query: str, playlist: bool = False) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
-        """Synchronous yt-dlp extraction executed inside worker thread with Spotify bridge and intelligent fallback."""
+        """Synchronous yt-dlp extraction executed inside worker thread with Spotify bridge, authentication, and intelligent fallback."""
         opts = dict(self.ydl_opts)
         opts["noplaylist"] = not playlist
+
+        cookie_file = self._validate_and_get_cookie_file()
+        if cookie_file:
+            opts["cookiefile"] = cookie_file
+
+        self._configure_po_token(opts)
+
         spotify_meta = None
 
         if self.is_url(query) and "spotify.com" in query.lower():
@@ -390,25 +560,99 @@ class AudioResolver:
             else:
                 target = f"ytsearch2:{clean_q or query.strip()}"
 
+        # Attempt YouTube extraction with bounded retry
+        bot_challenge_detected = False
+        last_yt_error: Optional[Exception] = None
+        max_attempts = 2
+
+        for attempt in range(1, max_attempts + 1):
+            try:
+                with yt_dlp.YoutubeDL(opts) as ydl:
+                    info = ydl.extract_info(target, download=False)
+                    if info:
+                        return info, spotify_meta
+            except Exception as yt_err:
+                last_yt_error = yt_err
+                err_msg = str(yt_err).lower()
+                if (
+                    "sign in to confirm you're not a bot" in err_msg
+                    or "bot verification" in err_msg
+                    or "confirm you’re not a bot" in err_msg
+                    or "429" in err_msg
+                    or "too many requests" in err_msg
+                ):
+                    bot_challenge_detected = True
+                    logger.warning("YouTube anti-bot challenge detected on attempt %d: %s", attempt, yt_err)
+                    break
+                if attempt < max_attempts:
+                    time.sleep(0.5)
+
+        # Multi-provider resilient fallback cascade (SoundCloud -> Audius -> Jamendo)
+        sc_target = spotify_meta["query"] if (spotify_meta and spotify_meta.get("query")) else (clean_q if not self.is_url(query) else query.strip())
+
+        # 1. Fallback: SoundCloud
         try:
-            with yt_dlp.YoutubeDL(opts) as ydl:
-                info = ydl.extract_info(target, download=False)
-                return info, spotify_meta
-        except Exception as yt_err:
-            err_msg = str(yt_err).lower()
-            if not self.is_url(query) or (spotify_meta and spotify_meta.get("query")):
-                logger.warning("YouTube blocked datacenter request (%s); seamlessly falling back to SoundCloud for '%s'", yt_err, query)
-                sc_opts = dict(self.ydl_opts)
-                sc_opts["noplaylist"] = not playlist
-                sc_target = spotify_meta["query"] if (spotify_meta and spotify_meta.get("query")) else query.strip()
-                try:
-                    with yt_dlp.YoutubeDL(sc_opts) as sc_ydl:
-                        info = sc_ydl.extract_info(f"scsearch5:{sc_target}", download=False)
-                        if info:
-                            return info, spotify_meta
-                except Exception as sc_err:
-                    logger.warning("SoundCloud fallback failed for '%s': %s", sc_target, sc_err)
-            raise
+            logger.info("Attempting SoundCloud fallback for '%s'...", sc_target)
+            sc_opts = dict(self.ydl_opts)
+            sc_opts["noplaylist"] = not playlist
+            with yt_dlp.YoutubeDL(sc_opts) as sc_ydl:
+                sc_info = sc_ydl.extract_info(f"scsearch5:{sc_target}", download=False)
+                if sc_info and "entries" in sc_info and sc_info["entries"]:
+                    valid_sc = [e for e in sc_info["entries"] if e]
+                    if valid_sc:
+                        # Check match score for top candidate
+                        top_sc = valid_sc[0]
+                        sc_title = top_sc.get("title") or ""
+                        sc_uploader = top_sc.get("uploader") or ""
+                        sc_channel = top_sc.get("channel") or ""
+                        match_score = self.calculate_match_score(sc_target, sc_title, sc_uploader, sc_channel)
+                        if match_score >= 0.35:
+                            logger.info("SoundCloud resolved matching candidate '%s' (score: %.2f)", sc_title, match_score)
+                            return sc_info, spotify_meta
+        except Exception as sc_err:
+            logger.warning("SoundCloud fallback failed for '%s': %s", sc_target, sc_err)
+
+        # 2. Fallback: Audius
+        try:
+            logger.info("Attempting Audius fallback for '%s'...", sc_target)
+            audius_info = self._search_audius(sc_target)
+            if audius_info and "entries" in audius_info and audius_info["entries"]:
+                top_aud = audius_info["entries"][0]
+                aud_title = top_aud.get("title") or ""
+                aud_uploader = top_aud.get("uploader") or ""
+                match_score = self.calculate_match_score(sc_target, aud_title, aud_uploader, "")
+                if match_score >= 0.35:
+                    logger.info("Audius resolved matching candidate '%s' (score: %.2f)", aud_title, match_score)
+                    return audius_info, spotify_meta
+        except Exception as aud_err:
+            logger.warning("Audius fallback failed for '%s': %s", sc_target, aud_err)
+
+        # 3. Fallback: Jamendo
+        try:
+            logger.info("Attempting Jamendo fallback for '%s'...", sc_target)
+            jam_info = self._search_jamendo(sc_target)
+            if jam_info and "entries" in jam_info and jam_info["entries"]:
+                top_jam = jam_info["entries"][0]
+                jam_title = top_jam.get("title") or ""
+                jam_uploader = top_jam.get("uploader") or ""
+                match_score = self.calculate_match_score(sc_target, jam_title, jam_uploader, "")
+                if match_score >= 0.35:
+                    logger.info("Jamendo resolved matching candidate '%s' (score: %.2f)", jam_title, match_score)
+                    return jam_info, spotify_meta
+        except Exception as jam_err:
+            logger.warning("Jamendo fallback failed for '%s': %s", sc_target, jam_err)
+
+        if bot_challenge_detected:
+            raise YouTubeBotChallengeError(
+                f"YouTube requested bot verification ('Sign in to confirm you're not a bot'). "
+                f"Fallback providers (SoundCloud, Audius, Jamendo) did not have a matching source for '{query}'. "
+                f"Please configure YouTube cookies or a PO token in the environment to unlock YouTube playback on cloud servers."
+            )
+
+        if last_yt_error:
+            raise last_yt_error
+
+        raise TrackNotFoundError(f"Could not resolve any audio candidates for '{query}'.")
 
     async def resolve(
         self,
@@ -464,10 +708,15 @@ class AudioResolver:
             views = entry.get("view_count")
 
             # Determine audio provider
-            if "youtube.com" in webpage or "youtu.be" in webpage:
+            extractor = (entry.get("extractor") or "").lower()
+            if "youtube.com" in webpage or "youtu.be" in webpage or "youtube" in extractor:
                 provider = "youtube"
-            elif "soundcloud.com" in webpage:
+            elif "soundcloud.com" in webpage or "soundcloud" in extractor:
                 provider = "soundcloud"
+            elif "audius" in webpage or "audius" in extractor:
+                provider = "audius"
+            elif "jamendo" in webpage or "jamendo" in extractor:
+                provider = "jamendo"
             else:
                 provider = "direct"
 

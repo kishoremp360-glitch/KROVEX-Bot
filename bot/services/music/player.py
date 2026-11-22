@@ -246,8 +246,9 @@ class GuildAudioPlayer:
             async with self.lock:
                 self.queue.insert(0, track)
             await self.play_next()
-            if self.current_track == track:
+            if self.current_track == track and self.state == PlayerState.PLAYING:
                 return 0, True
+            return 0, False
 
             async with self.lock:
                 pos = self.queue.index(track) + 1 if track in self.queue else len(self.queue)

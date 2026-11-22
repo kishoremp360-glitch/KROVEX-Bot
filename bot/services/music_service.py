@@ -45,6 +45,10 @@ class MusicService:
         self.resolver = AudioResolver(
             client_id=getattr(cfg, "spotify_client_id", None) if cfg else None,
             client_secret=getattr(cfg, "spotify_client_secret", None) if cfg else None,
+            cookie_path=getattr(cfg, "youtube_cookie_path", None) if cfg else None,
+            cookies_content=getattr(cfg, "youtube_cookies_content", None) if cfg else None,
+            po_token=getattr(cfg, "youtube_po_token", None) if cfg else None,
+            visitor_data=getattr(cfg, "youtube_visitor_data", None) if cfg else None,
         )
         self.lyrics_service = LyricsService(session=bot.session if bot else None)
 

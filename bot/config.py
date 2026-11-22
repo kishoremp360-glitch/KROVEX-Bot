@@ -89,6 +89,12 @@ class BotConfig:
     spotify_client_id: Optional[str] = None
     spotify_client_secret: Optional[str] = None
 
+    # YouTube Resolver & Authentication Configuration (Issue B)
+    youtube_cookie_path: Optional[str] = None
+    youtube_cookies_content: Optional[str] = None
+    youtube_po_token: Optional[str] = None
+    youtube_visitor_data: Optional[str] = None
+
     # Extended Branding & Activity Configuration (.env sync)
     bot_name: str = "KROVEX"
     bot_description: str = "An All-in-One Discord Bot"
@@ -289,6 +295,10 @@ class BotConfig:
             bug_report_url=os.getenv("BUG_REPORT_URL", "").strip(),
             spotify_client_id=os.getenv("SPOTIFY_CLIENT_ID", "").strip() or None,
             spotify_client_secret=os.getenv("SPOTIFY_CLIENT_SECRET", "").strip() or None,
+            youtube_cookie_path=os.getenv("YOUTUBE_COOKIE_PATH", "").strip() or os.getenv("YOUTUBE_COOKIES_FILE", "").strip() or None,
+            youtube_cookies_content=os.getenv("YOUTUBE_COOKIES_CONTENT", "").strip() or None,
+            youtube_po_token=os.getenv("YOUTUBE_PO_TOKEN", "").strip() or None,
+            youtube_visitor_data=os.getenv("YOUTUBE_VISITOR_DATA", "").strip() or None,
             sync_commands_on_startup=parse_bool("SYNC_COMMANDS_ON_STARTUP", True),
 
             # Extended Branding & Activity Configuration

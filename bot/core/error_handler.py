@@ -226,6 +226,16 @@ class GlobalErrorHandler:
                     raise
             else:
                 await interaction.followup.send(embed=embed, ephemeral=ephemeral)
+        except discord.NotFound as exc:
+            if getattr(exc, "code", None) == 10062:
+                # Interaction expired (10062: Unknown interaction). Fall back to channel message
+                if interaction.channel and hasattr(interaction.channel, "send"):
+                    try:
+                        await interaction.channel.send(embed=embed)
+                        return
+                    except Exception:
+                        pass
+            logger.error("Failed to send error response to interaction: %s", exc)
         except Exception as err:
             logger.error("Failed to send error response to interaction: %s", err)
 

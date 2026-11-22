@@ -53,17 +53,23 @@ class Mimic(commands.Cog, name="Mimic"):
             await ctx.send_error("Too Long", "Discord nicknames cannot exceed 32 characters.")
             return
 
+        me = (guild.me if guild else None) or ctx.me or (guild.get_member(self.bot.user.id) if guild and self.bot.user else None)
+        if not me:
+            await ctx.send_error("Error", "Could not resolve bot member details in this server.")
+            return
+
         # Check bot permissions
-        if not guild.me.guild_permissions.change_nickname and not guild.me.guild_permissions.manage_nicknames:
+        if not me.guild_permissions.change_nickname and not me.guild_permissions.manage_nicknames:
             await ctx.send_error(
                 "Missing Permission",
                 "I require the **Change Nickname** or **Manage Nicknames** permission to update my identity in this server."
             )
             return
 
-        old_nick = guild.me.display_name
+        bot_name = self.bot.user.name if self.bot.user else "KROVEX"
+        old_nick = me.display_name
         try:
-            await guild.me.edit(nick=nick_clean, reason=f"Death Bot Mimic Persona updated by {ctx.author.name}")
+            await me.edit(nick=nick_clean, reason=f"{bot_name} Mimic Persona updated by {ctx.author.name}")
         except discord.Forbidden:
             await ctx.send_error("Forbidden", "Discord denied permission to change my nickname (my role may be below the server owner or another bot).")
             return
@@ -72,7 +78,7 @@ class Mimic(commands.Cog, name="Mimic"):
             return
 
         if self.bot.mimic_repo:
-            await self.bot.mimic_repo.set_nickname(guild.id, nick_clean, original_name=guild.me.name)
+            await self.bot.mimic_repo.set_nickname(guild.id, nick_clean, original_name=me.name)
 
         embed = EmbedBuilder.success(
             title="Mimic Identity Updated",
@@ -191,27 +197,33 @@ class Mimic(commands.Cog, name="Mimic"):
     async def _execute_preview(self, ctx: UnifiedContext) -> None:
         guild = ctx.guild
         if not guild:
+            await ctx.send_error("Unavailable", "This command can only be used inside a Discord server.")
             return
 
         profile = await self.bot.mimic_repo.get_profile(guild.id) if self.bot.mimic_repo else {}
-        custom_nick = profile.get("nickname") or guild.me.nick or "*Default (Not Set)*"
-        custom_avatar = profile.get("avatar_url") or guild.me.display_avatar.url
-        global_name = self.bot.user.name if self.bot.user else "Death Bot"
+        me = (guild.me if guild else None) or ctx.me or (guild.get_member(self.bot.user.id) if self.bot.user else None)
+        
+        custom_nick = profile.get("nickname") or (me.nick if me else None) or "*Default (Not Set)*"
+        fallback_avatar = self.bot.user.display_avatar.url if self.bot.user else ""
+        custom_avatar = profile.get("avatar_url") or (me.display_avatar.url if me else fallback_avatar)
+        global_name = self.bot.user.name if self.bot.user else "KROVEX"
+        can_change_nick = bool(me and (me.guild_permissions.change_nickname or me.guild_permissions.manage_nicknames))
 
         embed = discord.Embed(
             title=f"🎭 Mimic Identity Profile • {guild.name}",
             description=(
-                f"Overview of Death Bot's configured persona in this server:\n\n"
+                f"Overview of {global_name}'s configured persona in this server:\n\n"
                 f"• **Current Nickname:** `{custom_nick}`\n"
                 f"• **Global Bot Name:** `{global_name}`\n"
                 f"• **Server Context:** {guild.name} (`{guild.id}`)\n"
-                f"• **Nick Management:** {'🟢 Permitted' if guild.me.guild_permissions.change_nickname else '🔴 Missing Permission'}\n"
+                f"• **Nick Management:** {'🟢 Permitted' if can_change_nick else '🔴 Missing Permission'}\n"
                 f"• **Banner Support:** ℹ️ *Server-specific banners are not supported by the Discord Bot API.*"
             ),
             color=BRAND_COLOR,
         )
-        embed.set_thumbnail(url=custom_avatar)
-        embed.set_footer(text="Use ',mimic nick <name>' or ',mimic reset' to configure.")
+        if custom_avatar:
+            embed.set_thumbnail(url=custom_avatar)
+        embed.set_footer(text="Use '/mimic nick <name>' or '/mimic reset' to configure.")
         await ctx.reply(embed=embed)
 
     @mimic_group.command(name="preview", help="Preview the bot's configured identity profile for this server.")
@@ -224,23 +236,25 @@ class Mimic(commands.Cog, name="Mimic"):
     async def _execute_reset(self, ctx: UnifiedContext) -> None:
         guild = ctx.guild
         if not guild:
+            await ctx.send_error("Unavailable", "This command can only be used inside a Discord server.")
             return
 
-        if guild.me.guild_permissions.change_nickname:
+        bot_name = self.bot.user.name if self.bot.user else "KROVEX"
+        me = (guild.me if guild else None) or ctx.me or (guild.get_member(self.bot.user.id) if self.bot.user else None)
+        if me and (me.guild_permissions.change_nickname or me.guild_permissions.manage_nicknames):
             try:
-                await guild.me.edit(nick=None, reason=f"Death Bot Mimic Persona reset by {ctx.author.name}")
+                await me.edit(nick=None, reason=f"{bot_name} Mimic Persona reset by {ctx.author.name}")
             except Exception:
                 pass
 
         if self.bot.mimic_repo:
             await self.bot.mimic_repo.reset_profile(guild.id)
 
-        global_name = self.bot.user.name if self.bot.user else "Death Bot"
         embed = EmbedBuilder.success(
             title="Mimic Persona Reset",
             description=(
                 f"The bot's identity for **{guild.name}** has been restored to default:\n\n"
-                f"• **Name:** `{global_name}`\n"
+                f"• **Name:** `{bot_name}`\n"
                 f"• **Avatar:** Restored to default bot branding.\n"
                 f"• **Guild Configuration:** Cleared from SQLite database."
             ),
@@ -258,29 +272,50 @@ class Mimic(commands.Cog, name="Mimic"):
         name="mimic",
         description="Manage KROVEX's per-server persona and identity",
         default_permissions=discord.Permissions(administrator=True),
+        guild_only=True,
     )
 
     @mimic_slash.command(name="nick", description="Set the bot's custom nickname for this server")
     @app_commands.describe(nickname="The custom nickname for the bot (max 32 characters)")
     async def mimic_slash_nick(self, interaction: discord.Interaction, nickname: str) -> None:
-        await interaction.response.defer()
-        await self._execute_nick(UnifiedContext.from_interaction(interaction), nickname)
+        ctx = UnifiedContext.from_interaction(interaction)
+        await ctx.defer(ephemeral=False)
+        try:
+            await self._execute_nick(ctx, nickname)
+        except Exception as exc:
+            logger.error("Error executing /mimic nick: %s", exc, exc_info=True)
+            await ctx.send_error("Command Error", f"Failed to execute mimic nick: {exc}")
 
     @mimic_slash.command(name="avatar", description="Set the bot's custom avatar for this server")
     @app_commands.describe(avatar_url="Direct URL of the image (.png, .jpg, .webp)")
     async def mimic_slash_avatar(self, interaction: discord.Interaction, avatar_url: Optional[str] = None) -> None:
-        await interaction.response.defer()
-        await self._execute_avatar(UnifiedContext.from_interaction(interaction), avatar_url)
+        ctx = UnifiedContext.from_interaction(interaction)
+        await ctx.defer(ephemeral=False)
+        try:
+            await self._execute_avatar(ctx, avatar_url)
+        except Exception as exc:
+            logger.error("Error executing /mimic avatar: %s", exc, exc_info=True)
+            await ctx.send_error("Command Error", f"Failed to execute mimic avatar: {exc}")
 
     @mimic_slash.command(name="preview", description="Preview the bot's configured identity profile for this server")
     async def mimic_slash_preview(self, interaction: discord.Interaction) -> None:
-        await interaction.response.defer()
-        await self._execute_preview(UnifiedContext.from_interaction(interaction))
+        ctx = UnifiedContext.from_interaction(interaction)
+        await ctx.defer(ephemeral=False)
+        try:
+            await self._execute_preview(ctx)
+        except Exception as exc:
+            logger.error("Error executing /mimic preview: %s", exc, exc_info=True)
+            await ctx.send_error("Command Error", f"Failed to execute mimic preview: {exc}")
 
     @mimic_slash.command(name="reset", description="Reset the bot's identity in this server back to default branding")
     async def mimic_slash_reset(self, interaction: discord.Interaction) -> None:
-        await interaction.response.defer()
-        await self._execute_reset(UnifiedContext.from_interaction(interaction))
+        ctx = UnifiedContext.from_interaction(interaction)
+        await ctx.defer(ephemeral=False)
+        try:
+            await self._execute_reset(ctx)
+        except Exception as exc:
+            logger.error("Error executing /mimic reset: %s", exc, exc_info=True)
+            await ctx.send_error("Command Error", f"Failed to execute mimic reset: {exc}")
 
 
 async def setup(bot: "DeathBot") -> None:

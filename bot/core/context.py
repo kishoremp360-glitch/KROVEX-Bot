@@ -29,7 +29,7 @@ class UnifiedContext:
         self.bot = bot
         self.interaction = interaction
         self.prefix_ctx = prefix_ctx
-        self._deferred: bool = False
+        self._deferred: bool = interaction.response.is_done() if interaction else False
         self._ephemeral: bool = False
 
     @classmethod
@@ -77,7 +77,10 @@ class UnifiedContext:
     @property
     def me(self) -> Optional[discord.Member]:
         if self.guild:
-            return self.guild.me
+            if self.guild.me:
+                return self.guild.me
+            if self.bot and getattr(self.bot, "user", None):
+                return self.guild.get_member(self.bot.user.id)
         return None
 
     async def defer(self, ephemeral: bool = False) -> None:
@@ -106,36 +109,47 @@ class UnifiedContext:
         eff_ephemeral = ephemeral or self._ephemeral
 
         if self.interaction:
-            if not self.interaction.response.is_done() and not self._deferred:
-                try:
-                    await self.interaction.response.send_message(
-                        content=content,
-                        embeds=embeds or [],
-                        view=view or discord.utils.MISSING,
-                        ephemeral=eff_ephemeral,
-                    )
-                    return await self.interaction.original_response()
-                except (discord.HTTPException, discord.InteractionResponded) as exc:
-                    # Fallback to followup if Discord or local state already registered acknowledgement
-                    err_code = getattr(exc, "code", None)
-                    err_msg = str(exc).lower()
-                    if err_code == 40060 or "already been acknowledged" in err_msg or isinstance(exc, discord.InteractionResponded):
-                        return await self.interaction.followup.send(
+            try:
+                if not self.interaction.response.is_done() and not self._deferred:
+                    try:
+                        await self.interaction.response.send_message(
                             content=content,
                             embeds=embeds or [],
                             view=view or discord.utils.MISSING,
                             ephemeral=eff_ephemeral,
-                            wait=True,
                         )
-                    raise
-            else:
-                return await self.interaction.followup.send(
-                    content=content,
-                    embeds=embeds or [],
-                    view=view or discord.utils.MISSING,
-                    ephemeral=eff_ephemeral,
-                    wait=True,
-                )
+                        return await self.interaction.original_response()
+                    except (discord.HTTPException, discord.InteractionResponded) as exc:
+                        # Fallback to followup if Discord or local state already registered acknowledgement
+                        err_code = getattr(exc, "code", None)
+                        err_msg = str(exc).lower()
+                        if err_code == 40060 or "already been acknowledged" in err_msg or isinstance(exc, discord.InteractionResponded):
+                            return await self.interaction.followup.send(
+                                content=content,
+                                embeds=embeds or [],
+                                view=view or discord.utils.MISSING,
+                                ephemeral=eff_ephemeral,
+                                wait=True,
+                            )
+                        raise
+                else:
+                    return await self.interaction.followup.send(
+                        content=content,
+                        embeds=embeds or [],
+                        view=view or discord.utils.MISSING,
+                        ephemeral=eff_ephemeral,
+                        wait=True,
+                    )
+            except discord.NotFound as exc:
+                if getattr(exc, "code", None) == 10062:
+                    # Interaction token expired/invalid (10062: Unknown interaction). Fallback to channel.send
+                    if self.channel and hasattr(self.channel, "send"):
+                        return await self.channel.send(
+                            content=content,
+                            embeds=embeds or [],
+                            view=view or discord.utils.MISSING,
+                        )
+                raise
         elif self.prefix_ctx:
             return await self.prefix_ctx.reply(
                 content=content,
