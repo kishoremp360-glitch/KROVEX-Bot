@@ -269,12 +269,12 @@ class BotRoleService(commands.Cog, name="Bot Role Management"):
                 try:
                     # Check hierarchy: role must be lower than bot's highest role
                     can_assign = True
+                    top_pos = getattr(me.top_role, "position", 0) if hasattr(me, "top_role") and me.top_role is not None else 0
+                    role_pos = getattr(role, "position", 0)
                     if hasattr(me, "top_role") and me.top_role is not None:
                         try:
                             can_assign = me.top_role > role
                         except TypeError:
-                            top_pos = getattr(me.top_role, "position", 0)
-                            role_pos = getattr(role, "position", 0)
                             can_assign = top_pos > role_pos
 
                     if can_assign:
