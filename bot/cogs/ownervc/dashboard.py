@@ -495,44 +495,74 @@ def build_vc_embed(channel: discord.VoiceChannel) -> discord.Embed:
     return embed
 
 
-def build_owner_vc_embed(channel: discord.VoiceChannel, ban_count: int = 0) -> discord.Embed:
+def build_owner_vc_embed(
+    channel: Optional[discord.VoiceChannel] = None,
+    ban_count: int = 0,
+    guild: Optional[discord.Guild] = None,
+    scope: str = "current_vc",
+) -> discord.Embed:
     """Build the exact Owner & Staff Moderation Dashboard embed matching THOR APEX layout."""
-    ow = channel.overwrites_for(channel.guild.default_role)
-    is_locked = ow.connect is False
-    is_hidden = ow.view_channel is False
+    if channel and not guild:
+        guild = channel.guild
+    elif not guild and channel:
+        guild = channel.guild
 
-    limit_str = str(channel.user_limit) if channel.user_limit else "∞"
-    bitrate_kbps = channel.bitrate // 1000
+    owner = guild.get_member(guild.owner_id) if guild else None
+    owner_name = f"@{owner.display_name}" if owner else (f"<@{guild.owner_id}>" if guild else "Unknown")
 
-    owner = channel.guild.get_member(channel.guild.owner_id)
-    owner_name = f"@{owner.display_name}" if owner else f"<@{channel.guild.owner_id}>"
+    if channel:
+        ow = channel.overwrites_for(guild.default_role) if (guild and guild.default_role) else None
+        is_locked = ow.connect is False if ow else False
+        is_hidden = ow.view_channel is False if ow else False
 
-    # Line 1: 🔊 channel.name · count connected · Limit ∞ · 64 kbps
-    line1 = f"🔊 **{channel.name}** · **{len(channel.members)}** connected · Limit **{limit_str}** · **{bitrate_kbps} kbps**"
+        limit_str = str(channel.user_limit) if getattr(channel, "user_limit", 0) else "∞"
+        bitrate_kbps = getattr(channel, "bitrate", 64000) // 1000
+        mem_count = len(getattr(channel, "members", []))
+
+        # Line 1: 🔊 channel.name · count connected · Limit ∞ · 64 kbps
+        line1 = f"🔊 **{channel.name}** · **{mem_count}** connected · Limit **{limit_str}** · **{bitrate_kbps} kbps**"
+
+        owner_present = any(m.id == guild.owner_id for m in channel.members) if guild else False
+        voice_str = "⏹ Voice active" if mem_count > 0 else "💤 Voice idle"
+        audio_active = any(
+            m.voice and not (m.voice.mute or m.voice.self_mute or m.voice.deaf or m.voice.self_deaf)
+            for m in channel.members
+        )
+        audio_str = "✨ Audio active" if audio_active and mem_count > 0 else "🔇 Audio silent"
+        lock_str = "🔒 Locked" if is_locked else "🔓 Open"
+        vis_str = "👻 Hidden" if is_hidden else "✨ Visible"
+    else:
+        line1 = "🔊 **No Voice Channel Selected** · Limit **∞** · **64 kbps**"
+        owner_present = False
+        voice_str = "💤 Voice idle"
+        audio_str = "🔇 Audio silent"
+        lock_str = "🔓 Open"
+        vis_str = "✨ Visible"
 
     # Line 2: Operators: @TheRealThor
     line2 = f"Operators: {owner_name}"
 
     # Line 3: ✔ Owner present · ⏹ Voice active · ✨ Audio active
-    owner_present = any(m.id == channel.guild.owner_id for m in channel.members)
     owner_str = "✔ Owner present" if owner_present else "👤 Owner absent"
-    voice_str = "⏹ Voice active" if len(channel.members) > 0 else "💤 Voice idle"
-    audio_active = any(
-        m.voice and not (m.voice.mute or m.voice.self_mute or m.voice.deaf or m.voice.self_deaf)
-        for m in channel.members
-    )
-    audio_str = "✨ Audio active" if audio_active and len(channel.members) > 0 else "🔇 Audio silent"
     line3 = f"{owner_str} · {voice_str} · {audio_str}"
 
     # Line 4: 🛡️ Anti-mute · 🛡️ Anti-deafen · 🔒 Open · ✨ Visible · 0 voice-banned here
-    lock_str = "🔒 Locked" if is_locked else "🔒 Open"
-    vis_str = "👻 Hidden" if is_hidden else "✨ Visible"
     line4 = f"🛡️ Anti-mute · 🛡️ Anti-deafen · {lock_str} · {vis_str} · **{ban_count}** voice-banned here"
 
-    # Separator line: Voice · Room privacy · Message moderation | Server owner, extra owner, configured staff, or bot owner
-    desc = "*Voice · Room privacy · Message moderation | Server owner, extra owner, configured staff, or bot owner*"
+    # Line 5: Scope indicator
+    if scope == "entire_server" and guild:
+        active_vcs = len([vc for vc in guild.voice_channels if vc.members])
+        total_vcm = sum(len(vc.members) for vc in guild.voice_channels)
+        line5 = f"🌐 **Entire Server Scope** · **{active_vcs}** active VCs · **{total_vcm}** total voice members"
+    elif channel:
+        line5 = f"🎯 **Current VC Scope** · Target: {channel.mention}"
+    else:
+        line5 = "🎯 **Current VC Scope** · Select a voice channel below"
 
-    full_desc = f"> {line1}\n> {line2}\n> {line3}\n> {line4}\n\n> {desc}"
+    # Separator line: Voice · Room privacy · Message moderation | Server owner, extra owner, configured staff, or bot owner
+    desc = "*Voice · Room privacy · Message moderation / Server owner, extra owner, configured staff, or bot owner*"
+
+    full_desc = f"> {line1}\n> {line2}\n> {line3}\n> {line4}\n> {line5}\n\n> {desc}"
 
     embed = discord.Embed(
         title="Owner & Staff Moderation Dashboard",
@@ -657,35 +687,261 @@ class DeleteMessageModal(discord.ui.Modal, title="Delete Selected Message"):
             await interaction.response.send_message(f"❌ Failed to delete message: {e}", ephemeral=True)
 
 
+class RenameRoomModal(discord.ui.Modal, title="Rename Voice Channel"):
+    """Modal to rename the active voice channel."""
+    name_input = discord.ui.TextInput(
+        label="New Voice Channel Name",
+        placeholder="Enter new channel name...",
+        min_length=1,
+        max_length=100,
+        required=True,
+    )
+
+    def __init__(self, view: "OwnerVCControlView") -> None:
+        super().__init__()
+        self.control_view = view
+        if getattr(view, "channel", None) and getattr(view.channel, "name", None):
+            self.name_input.default = view.channel.name
+
+    async def on_submit(self, interaction: discord.Interaction) -> None:
+        if not self.control_view.channel:
+            await interaction.response.send_message("❌ No active voice channel selected.", ephemeral=True)
+            return
+        old_name = self.control_view.channel.name
+        new_name = self.name_input.value.strip()
+        try:
+            await self.control_view.channel.edit(name=new_name, reason=f"VCPANEL Rename by {interaction.user}")
+            await interaction.response.send_message(f"✏️ Renamed voice channel from **{old_name}** to **{new_name}**.", ephemeral=True)
+            await self.control_view._refresh_embed(interaction)
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Failed to rename channel: {e}", ephemeral=True)
+
+
+class CreateVoiceRoomModal(discord.ui.Modal, title="Create Voice Room"):
+    """Modal to create a new voice room in the server."""
+    name_input = discord.ui.TextInput(
+        label="Voice Channel Name",
+        placeholder="e.g. Lounge, Gaming, Meeting...",
+        min_length=1,
+        max_length=100,
+        required=True,
+    )
+    limit_input = discord.ui.TextInput(
+        label="User Limit (0 for unlimited)",
+        placeholder="0-99",
+        min_length=1,
+        max_length=2,
+        required=False,
+        default="0",
+    )
+
+    def __init__(self, view: "OwnerVCControlView") -> None:
+        super().__init__()
+        self.control_view = view
+
+    async def on_submit(self, interaction: discord.Interaction) -> None:
+        if not interaction.guild:
+            await interaction.response.send_message("❌ Must be used inside a server.", ephemeral=True)
+            return
+        name = self.name_input.value.strip()
+        limit = 0
+        try:
+            if self.limit_input.value.strip():
+                limit = int(self.limit_input.value.strip())
+        except ValueError:
+            pass
+        category = self.control_view.channel.category if (self.control_view.channel and self.control_view.channel.category) else None
+        try:
+            new_vc = await interaction.guild.create_voice_channel(
+                name=name,
+                category=category,
+                user_limit=limit,
+                reason=f"Created via VCPANEL by {interaction.user}",
+            )
+            self.control_view.channel = new_vc
+            await interaction.response.send_message(f"➕ Created voice channel {new_vc.mention} (Capacity: {limit or '∞'}).", ephemeral=True)
+            await self.control_view._refresh_embed(interaction)
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Failed to create voice room: {e}", ephemeral=True)
+
+
+class SelectDestinationVoiceChannelView(discord.ui.View):
+    """Dropdown view to choose destination voice channel for Move All operations."""
+
+    def __init__(self, channels: List[discord.VoiceChannel], author_id: int, on_select_cb) -> None:
+        try:
+            asyncio.get_running_loop()
+            super().__init__(timeout=60.0)
+        except RuntimeError:
+            from unittest.mock import MagicMock, patch
+            mock_loop = MagicMock()
+            mock_loop.create_future.return_value = MagicMock()
+            with patch("asyncio.get_running_loop", return_value=mock_loop):
+                super().__init__(timeout=60.0)
+        self.author_id = author_id
+        self.on_select_cb = on_select_cb
+
+        options = [
+            discord.SelectOption(
+                label=ch.name[:90],
+                value=str(ch.id),
+                emoji="🔊",
+                description=f"{len(ch.members)} connected | ID: {ch.id}"[:100],
+            )
+            for ch in channels[:25]
+        ]
+        if not options:
+            options = [discord.SelectOption(label="No voice channels found", value="none", emoji="⚠️")]
+
+        select = discord.ui.Select(
+            placeholder="Select destination Voice Channel...",
+            min_values=1,
+            max_values=1,
+            options=options,
+            custom_id="ownervc:dest_vc_select",
+        )
+        select.callback = self._on_select
+        self.add_item(select)
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.author_id:
+            await interaction.response.send_message("❌ This destination prompt is not for you.", ephemeral=True)
+            return False
+        return True
+
+    async def _on_select(self, interaction: discord.Interaction) -> None:
+        select = self.children[0]
+        val = select.values[0] if getattr(select, "values", None) else "none"
+        if val == "none" or not val:
+            await interaction.response.send_message("❌ No destination channel selected.", ephemeral=True)
+            return
+        dest_ch = interaction.guild.get_channel(int(val))
+        if not isinstance(dest_ch, discord.VoiceChannel):
+            await interaction.response.send_message("❌ Selected destination channel no longer exists.", ephemeral=True)
+            return
+        await self.on_select_cb(interaction, dest_ch)
+        self.stop()
+
+
+class TempDurationSelectView(discord.ui.View):
+    """View offering temporary durations (1m, 5m, 10m, 30m) for temporary mute/deafen."""
+
+    def __init__(self, action_name: str, target: discord.Member, author_id: int, on_duration_cb) -> None:
+        try:
+            asyncio.get_running_loop()
+            super().__init__(timeout=60.0)
+        except RuntimeError:
+            from unittest.mock import MagicMock, patch
+            mock_loop = MagicMock()
+            mock_loop.create_future.return_value = MagicMock()
+            with patch("asyncio.get_running_loop", return_value=mock_loop):
+                super().__init__(timeout=60.0)
+        self.action_name = action_name
+        self.target = target
+        self.author_id = author_id
+        self.on_duration_cb = on_duration_cb
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.author_id:
+            await interaction.response.send_message("❌ This prompt is not for you.", ephemeral=True)
+            return False
+        return True
+
+    @discord.ui.button(label="1 Minute", style=discord.ButtonStyle.secondary, emoji="⏱️")
+    async def btn_1m(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        await self.on_duration_cb(interaction, self.target, 60, "1 minute")
+        self.stop()
+
+    @discord.ui.button(label="5 Minutes", style=discord.ButtonStyle.primary, emoji="⏱️")
+    async def btn_5m(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        await self.on_duration_cb(interaction, self.target, 300, "5 minutes")
+        self.stop()
+
+    @discord.ui.button(label="10 Minutes", style=discord.ButtonStyle.primary, emoji="⏱️")
+    async def btn_10m(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        await self.on_duration_cb(interaction, self.target, 600, "10 minutes")
+        self.stop()
+
+    @discord.ui.button(label="30 Minutes", style=discord.ButtonStyle.danger, emoji="⏱️")
+    async def btn_30m(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+        await self.on_duration_cb(interaction, self.target, 1800, "30 minutes")
+        self.stop()
+
+
+class VoiceScopeSelect(discord.ui.Select):
+    """Scope selector placed directly ABOVE Voice moderation dropdown."""
+
+    def __init__(self, current_scope: str = "current_vc") -> None:
+        options = [
+            discord.SelectOption(
+                label="Scope: Current VC",
+                value="current_vc",
+                emoji="🎯",
+                description="Target only the selected voice channel",
+                default=(current_scope == "current_vc"),
+            ),
+            discord.SelectOption(
+                label="Scope: Entire Server",
+                value="entire_server",
+                emoji="🌐",
+                description="Target all active voice channels and eligible members in guild",
+                default=(current_scope == "entire_server"),
+            ),
+        ]
+        super().__init__(
+            placeholder="Select Control Scope (Current VC / Entire Server)...",
+            min_values=1,
+            max_values=1,
+            options=options,
+            row=0,
+            custom_id="ownervc:scope_select",
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        view: OwnerVCControlView = self.view  # type: ignore
+        view.scope = self.values[0]
+        for opt in self.options:
+            opt.default = (opt.value == view.scope)
+        scope_name = "Current VC" if view.scope == "current_vc" else "Entire Server"
+        await interaction.response.send_message(
+            f"🎯 Control Scope updated to **{scope_name}**.", ephemeral=True
+        )
+        await view._refresh_embed(interaction)
+
+
 class VoiceModerationSelect(discord.ui.Select):
     """Dropdown 1: Voice Moderation operations."""
 
     def __init__(self) -> None:
         options = [
-            discord.SelectOption(label="Activate VC Loop", value="loop_activate", emoji="🔁", description="Anchor a member so they automatically return if disconnected"),
+            discord.SelectOption(label="Mute All", value="mute_all", emoji="🔇", description="Server-mute all participants in target scope"),
+            discord.SelectOption(label="Unmute All", value="unmute_all", emoji="🔊", description="Server-unmute all participants in target scope"),
+            discord.SelectOption(label="Deafen All", value="deafen_all", emoji="🔕", description="Server-deafen all participants in target scope"),
+            discord.SelectOption(label="Undeafen All", value="undeafen_all", emoji="🔔", description="Server-undeafen all participants in target scope"),
+            discord.SelectOption(label="Move All to Another VC", value="move_all", emoji="➡️", description="Move all participants in target scope to another VC"),
+            discord.SelectOption(label="Disconnect All", value="kick_all", emoji="🚪", description="Disconnect all participants in target scope"),
+            discord.SelectOption(label="Mute Member", value="mute", emoji="🔇", description="Server-mute a specific member in voice"),
+            discord.SelectOption(label="Unmute Member", value="unmute", emoji="🔊", description="Server-unmute a specific member in voice"),
+            discord.SelectOption(label="Deafen Member", value="deafen", emoji="🔕", description="Server-deafen a specific member in voice"),
+            discord.SelectOption(label="Undeafen Member", value="undeafen", emoji="🔔", description="Server-undeafen a specific member in voice"),
+            discord.SelectOption(label="Move Member", value="drag", emoji="➡️", description="Move a member into the active voice channel"),
+            discord.SelectOption(label="Disconnect Member", value="kick", emoji="🚪", description="Evict a connected member from voice"),
+            discord.SelectOption(label="Voice Ban Member", value="ban", emoji="🔨", description="Ban a member from connecting to this voice channel"),
+            discord.SelectOption(label="Voice Unban Member", value="unban", emoji="🛡️", description="Remove voice ban overwrite for a member"),
+            discord.SelectOption(label="Temporary Mute", value="temp_mute", emoji="⏳", description="Temporarily server-mute a member (1m/5m/10m/30m)"),
+            discord.SelectOption(label="Temporary Deafen", value="temp_deafen", emoji="⏱️", description="Temporarily server-deafen a member (1m/5m/10m/30m)"),
+            discord.SelectOption(label="View Connected Members", value="view_members", emoji="👥", description="List connected voice members and their statuses"),
+            discord.SelectOption(label="Clear Voice Bans", value="clear_bans", emoji="🛡️", description="Clear all voice-ban overwrites for this channel"),
+            discord.SelectOption(label="Activate VC Loop", value="loop_activate", emoji="🔁", description="Anchor a member so they return if disconnected"),
             discord.SelectOption(label="Stop VC Loop", value="loop_stop", emoji="⏹️", description="Stop automated reconnect loop for a member"),
             discord.SelectOption(label="VC Loop Status", value="loop_status", emoji="📡", description="View active VC loop configurations for this channel"),
-            discord.SelectOption(label="Kick Member", value="kick", emoji="🚪", description="Evict a connected member from voice"),
-            discord.SelectOption(label="Voice Ban", value="ban", emoji="🔨", description="Ban a member from connecting to this voice channel"),
-            discord.SelectOption(label="Voice Unban", value="unban", emoji="🛡️", description="Remove voice ban overwrite for a member"),
-            discord.SelectOption(label="Mute Member", value="mute", emoji="🔇", description="Server-mute a member in voice"),
-            discord.SelectOption(label="Unmute Member", value="unmute", emoji="🔊", description="Server-unmute a member in voice"),
-            discord.SelectOption(label="Deafen Member", value="deafen", emoji="🔕", description="Server-deafen a member in voice"),
-            discord.SelectOption(label="Undeafen Member", value="undeafen", emoji="🔔", description="Server-undeafen a member in voice"),
-            discord.SelectOption(label="Move Member", value="drag", emoji="➡️", description="Move single member into this voice channel"),
-            discord.SelectOption(label="Mute All Members", value="mute_all", emoji="🔇", description="Server-mute all participants (Confirm required)"),
-            discord.SelectOption(label="Unmute All Members", value="unmute_all", emoji="🔊", description="Server-unmute all participants in VC"),
-            discord.SelectOption(label="Deafen All Members", value="deafen_all", emoji="🔕", description="Server-deafen all participants (Confirm required)"),
-            discord.SelectOption(label="Undeafen All Members", value="undeafen_all", emoji="🔔", description="Server-undeafen all participants in VC"),
-            discord.SelectOption(label="Disconnect All", value="kick_all", emoji="🚪", description="Evict all participants from VC (Confirm required)"),
-            discord.SelectOption(label="Clear Voice Bans", value="clear_bans", emoji="🛡️", description="Clear all voice-ban overwrites for this channel"),
         ]
         super().__init__(
             placeholder="Voice moderation",
             min_values=1,
             max_values=1,
             options=options,
-            row=0,
+            row=1,
             custom_id="ownervc:voice_moderation",
         )
 
@@ -714,35 +970,52 @@ class VoiceModerationSelect(discord.ui.Select):
             await view._prompt_member_action(interaction, "Undeafen in VC", view._handle_undeafen_target)
         elif val == "drag":
             await view._prompt_member_action(interaction, "Drag to VC", view._handle_drag_target)
+        elif val == "move_all":
+            await view._prompt_move_all(interaction)
+        elif val == "temp_mute":
+            await view._prompt_temp_action(interaction, "Temporary Mute", view._handle_temp_mute_execute)
+        elif val == "temp_deafen":
+            await view._prompt_temp_action(interaction, "Temporary Deafen", view._handle_temp_deafen_execute)
+        elif val == "view_members":
+            await view._handle_view_members(interaction)
         elif val == "mute_all":
-            confirm = ConfirmBulkActionView("Mute All Members", view.channel.name, interaction.user.id, view._handle_muteall)
-            await interaction.response.send_message(
-                f"⚠️ Are you sure you want to **Server-Mute All** members in **{view.channel.name}**?",
-                view=confirm,
-                ephemeral=True,
-            )
+            if view.scope == "entire_server":
+                channels = [c for c in interaction.guild.voice_channels if c.members]
+                targets = sum(len(c.members) for c in channels)
+                prompt_text = f"⚠️ Are you sure you want to **Server-Mute ALL {targets} members** across **{len(channels)} voice channels**?\nTarget Scope: **🌐 Entire Server**"
+            else:
+                targets = len(view.channel.members) if view.channel else 0
+                prompt_text = f"⚠️ Are you sure you want to **Server-Mute {targets} members** in **{view.channel.name if view.channel else 'this channel'}**?\nTarget Scope: **🎯 Current VC**"
+            confirm = ConfirmBulkActionView("Mute All Members", view.channel.name if view.channel else "All Channels", interaction.user.id, view._handle_muteall)
+            await interaction.response.send_message(prompt_text, view=confirm, ephemeral=True)
         elif val == "unmute_all":
             await view._handle_unmuteall(interaction)
         elif val == "deafen_all":
-            confirm = ConfirmBulkActionView("Deafen All Members", view.channel.name, interaction.user.id, view._handle_deafenall)
-            await interaction.response.send_message(
-                f"⚠️ Are you sure you want to **Server-Deafen All** members in **{view.channel.name}**?",
-                view=confirm,
-                ephemeral=True,
-            )
+            if view.scope == "entire_server":
+                channels = [c for c in interaction.guild.voice_channels if c.members]
+                targets = sum(len(c.members) for c in channels)
+                prompt_text = f"⚠️ Are you sure you want to **Server-Deafen ALL {targets} members** across **{len(channels)} voice channels**?\nTarget Scope: **🌐 Entire Server**"
+            else:
+                targets = len(view.channel.members) if view.channel else 0
+                prompt_text = f"⚠️ Are you sure you want to **Server-Deafen {targets} members** in **{view.channel.name if view.channel else 'this channel'}**?\nTarget Scope: **🎯 Current VC**"
+            confirm = ConfirmBulkActionView("Deafen All Members", view.channel.name if view.channel else "All Channels", interaction.user.id, view._handle_deafenall)
+            await interaction.response.send_message(prompt_text, view=confirm, ephemeral=True)
         elif val == "undeafen_all":
             await view._handle_undeafenall(interaction)
         elif val == "kick_all":
-            confirm = ConfirmBulkActionView("Disconnect All Members", view.channel.name, interaction.user.id, view._handle_kickall)
-            await interaction.response.send_message(
-                f"⚠️ Are you sure you want to **Disconnect All** members from **{view.channel.name}**?",
-                view=confirm,
-                ephemeral=True,
-            )
+            if view.scope == "entire_server":
+                channels = [c for c in interaction.guild.voice_channels if c.members]
+                targets = sum(len(c.members) for c in channels)
+                prompt_text = f"⚠️ Are you sure you want to **Disconnect ALL {targets} members** from **{len(channels)} voice channels**?\nTarget Scope: **🌐 Entire Server**"
+            else:
+                targets = len(view.channel.members) if view.channel else 0
+                prompt_text = f"⚠️ Are you sure you want to **Disconnect {targets} members** from **{view.channel.name if view.channel else 'this channel'}**?\nTarget Scope: **🎯 Current VC**"
+            confirm = ConfirmBulkActionView("Disconnect All Members", view.channel.name if view.channel else "All Channels", interaction.user.id, view._handle_kickall)
+            await interaction.response.send_message(prompt_text, view=confirm, ephemeral=True)
         elif val == "clear_bans":
-            confirm = ConfirmBulkActionView("Clear Voice Bans", view.channel.name, interaction.user.id, view._handle_clearbans)
+            confirm = ConfirmBulkActionView("Clear Voice Bans", view.channel.name if view.channel else "All Channels", interaction.user.id, view._handle_clearbans)
             await interaction.response.send_message(
-                f"⚠️ Are you sure you want to **Clear All Voice Bans** for **{view.channel.name}**?",
+                f"⚠️ Are you sure you want to **Clear All Voice Bans** for **{view.channel.name if view.channel else 'this channel'}**?",
                 view=confirm,
                 ephemeral=True,
             )
@@ -755,17 +1028,22 @@ class VoicePrivacyCapacitySelect(discord.ui.Select):
         options = [
             discord.SelectOption(label="Lock Room", value="lock", emoji="🔒", description="Prevent unauthorized members from joining"),
             discord.SelectOption(label="Unlock Room", value="unlock", emoji="🔓", description="Allow members to join voice channel"),
-            discord.SelectOption(label="Hide Room", value="hide", emoji="👁️", description="Make channel invisible to @everyone"),
-            discord.SelectOption(label="Show Room", value="show", emoji="✨", description="Make channel visible to @everyone"),
+            discord.SelectOption(label="Make Room Private", value="hide", emoji="👁️", description="Make channel invisible to @everyone"),
+            discord.SelectOption(label="Make Room Visible", value="show", emoji="✨", description="Make channel visible to @everyone"),
             discord.SelectOption(label="Ghost Mode", value="ghost", emoji="👻", description="Stealth lock and hide voice channel"),
             discord.SelectOption(label="Set User Limit", value="set_limit", emoji="👥", description="Specify custom user limit (Modal input)"),
             discord.SelectOption(label="Remove User Limit", value="remove_limit", emoji="♾️", description="Remove user limit (Set to unlimited)"),
             discord.SelectOption(label="Display Current User Limit", value="view_limit", emoji="📊", description="View current channel participant capacity"),
             discord.SelectOption(label="Change Bitrate", value="bitrate", emoji="🎵", description="Cycle audio stream fidelity (64k/96k/128k)"),
             discord.SelectOption(label="Display Current Bitrate", value="view_bitrate", emoji="🔊", description="View audio stream bitrate and boost tier"),
-            discord.SelectOption(label="Add Operator", value="add_operator", emoji="➕", description="Authorize a member as channel operator"),
+            discord.SelectOption(label="Rename Room", value="rename_room", emoji="✏️", description="Rename the active voice channel (Modal input)"),
+            discord.SelectOption(label="Move Members to AFK", value="move_afk", emoji="💤", description="Move connected participants to server AFK channel"),
+            discord.SelectOption(label="Create Voice Room", value="create_room", emoji="➕", description="Create a new voice channel in guild (Modal input)"),
+            discord.SelectOption(label="Delete Voice Room", value="delete_room", emoji="🗑️", description="Permanently delete the active voice channel"),
+            discord.SelectOption(label="Clone Voice Room", value="clone_room", emoji="✨", description="Clone voice channel with exact overwrites"),
+            discord.SelectOption(label="Add Operator", value="add_operator", emoji="👑", description="Authorize a member as channel operator"),
             discord.SelectOption(label="Remove Operator", value="remove_operator", emoji="➖", description="Revoke channel operator privileges"),
-            discord.SelectOption(label="Display Current Operators", value="operators", emoji="👑", description="View authorized channel operators"),
+            discord.SelectOption(label="Display Current Operators", value="operators", emoji="🛡️", description="View authorized channel operators"),
             discord.SelectOption(label="Room Telemetry", value="info", emoji="📡", description="View real-time voice telemetry and configuration"),
         ]
         super().__init__(
@@ -773,7 +1051,7 @@ class VoicePrivacyCapacitySelect(discord.ui.Select):
             min_values=1,
             max_values=1,
             options=options,
-            row=1,
+            row=2,
             custom_id="ownervc:privacy_capacity",
         )
 
@@ -800,6 +1078,16 @@ class VoicePrivacyCapacitySelect(discord.ui.Select):
             await view._handle_bitrate_cycle(interaction)
         elif val == "view_bitrate":
             await view._handle_view_bitrate(interaction)
+        elif val == "rename_room":
+            await view._handle_rename_room(interaction)
+        elif val == "move_afk":
+            await view._handle_move_afk(interaction)
+        elif val == "create_room":
+            await view._handle_create_room(interaction)
+        elif val == "delete_room":
+            await view._handle_delete_room(interaction)
+        elif val == "clone_room":
+            await view._handle_clone_room(interaction)
         elif val == "add_operator":
             await view._prompt_member_action(interaction, "Add Operator", view._handle_add_operator_target)
         elif val == "remove_operator":
@@ -815,6 +1103,7 @@ class MessageModerationSelect(discord.ui.Select):
 
     def __init__(self) -> None:
         options = [
+            discord.SelectOption(label="Open Message Tools", value="open_tools", emoji="💬", description="Open quick message moderation tools & intelligence"),
             discord.SelectOption(label="Purge 10 Messages", value="purge_10", emoji="🧹", description="Delete last 10 messages in text channel"),
             discord.SelectOption(label="Purge 25 Messages", value="purge_25", emoji="🧹", description="Delete last 25 messages in text channel"),
             discord.SelectOption(label="Purge 50 Messages", value="purge_50", emoji="🧹", description="Delete last 50 messages in text channel"),
@@ -831,14 +1120,16 @@ class MessageModerationSelect(discord.ui.Select):
             min_values=1,
             max_values=1,
             options=options,
-            row=2,
+            row=3,
             custom_id="ownervc:message_moderation",
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
         view: OwnerVCControlView = self.view  # type: ignore
         val = self.values[0]
-        if val == "purge_10":
+        if val == "open_tools":
+            await view._handle_open_message_tools(interaction)
+        elif val == "purge_10":
             await view._handle_purge(interaction, 10)
         elif val == "purge_25":
             await view._handle_purge(interaction, 25)
@@ -863,7 +1154,13 @@ class MessageModerationSelect(discord.ui.Select):
 class OwnerVCControlView(discord.ui.View):
     """Interactive view for KROVEX Owner VCPANEL with exactly 3 dropdown sections."""
 
-    def __init__(self, bot: "DeathBot", channel: discord.VoiceChannel, timeout: float = 600.0) -> None:
+    def __init__(
+        self,
+        bot: "DeathBot",
+        channel: Optional[discord.VoiceChannel] = None,
+        scope: str = "current_vc",
+        timeout: float = 600.0,
+    ) -> None:
         try:
             asyncio.get_running_loop()
             super().__init__(timeout=timeout)
@@ -875,20 +1172,38 @@ class OwnerVCControlView(discord.ui.View):
                 super().__init__(timeout=timeout)
         self.bot = bot
         self.channel = channel
+        self.scope = scope
         self._lock = asyncio.Lock()
 
-        # Add exactly three dropdown sections matching THOR APEX layout
+        # Row 0: Scope Selector (Above Voice Moderation)
+        self.add_item(VoiceScopeSelect(current_scope=self.scope))
+
+        # Row 1: Voice Moderation
         self.add_item(VoiceModerationSelect())
+
+        # Row 2: Voice Room Privacy and Capacity
         self.add_item(VoicePrivacyCapacitySelect())
+
+        # Row 3: Message Moderation
         self.add_item(MessageModerationSelect())
 
-        # Row 3: Quick Navigation to Voice Control Centre & Owner Dashboard
+        # Row 4: Switch VC, Voice Control Centre, Owner Governance
+        switch_vc_btn = discord.ui.Button(
+            label="Switch VC",
+            style=discord.ButtonStyle.secondary,
+            emoji="🔄",
+            custom_id="ownervc:switch_vc",
+            row=4,
+        )
+        switch_vc_btn.callback = self._handle_switch_channel
+        self.add_item(switch_vc_btn)
+
         vc_centre_btn = discord.ui.Button(
             label="Voice Control Centre",
             style=discord.ButtonStyle.primary,
             emoji="🎛️",
             custom_id="ownervc:goto_vc_centre",
-            row=3,
+            row=4,
         )
         vc_centre_btn.callback = self._handle_goto_vc_centre
         self.add_item(vc_centre_btn)
@@ -898,7 +1213,7 @@ class OwnerVCControlView(discord.ui.View):
             style=discord.ButtonStyle.secondary,
             emoji="👑",
             custom_id="ownervc:goto_owner_dash",
-            row=3,
+            row=4,
         )
         owner_dash_btn.callback = self._handle_goto_owner_dashboard
         self.add_item(owner_dash_btn)
@@ -1009,8 +1324,9 @@ class OwnerVCControlView(discord.ui.View):
 
     async def _refresh_embed(self, interaction: discord.Interaction) -> None:
         try:
-            ban_count = await self._get_ban_count()
-            embed = build_owner_vc_embed(self.channel, ban_count=ban_count)
+            ban_count = await self._get_ban_count() if self.channel else 0
+            guild = self.channel.guild if self.channel else interaction.guild
+            embed = build_owner_vc_embed(self.channel, ban_count=ban_count, guild=guild, scope=self.scope)
             if not interaction.response.is_done():
                 await interaction.response.edit_message(embed=embed, view=self)
             elif interaction.message:
@@ -1181,96 +1497,413 @@ class OwnerVCControlView(discord.ui.View):
             except Exception as e:
                 await interaction.response.send_message(f"❌ Failed to drag {target.display_name}: {e}", ephemeral=True)
 
-    async def _handle_muteall(self, interaction: discord.Interaction) -> None:
-        async with self._lock:
-            vc = await self._validate_channel(interaction)
-            if not vc or not self._has_bot_perm(interaction, "mute_members"):
-                await interaction.response.send_message("❌ Missing Mute Members permission.", ephemeral=True)
-                return
+    async def _get_target_channels(self, interaction: discord.Interaction) -> List[discord.VoiceChannel]:
+        """Resolve target voice channels based on active scope (Current VC vs Entire Server)."""
+        if self.scope == "entire_server" and interaction.guild:
+            return list(interaction.guild.voice_channels)
+        vc = await self._validate_channel(interaction)
+        return [vc] if vc else []
+
+    async def _handle_switch_channel(self, interaction: discord.Interaction) -> None:
+        """Allow operator to switch the active controlled voice channel."""
+        if not interaction.guild:
+            await interaction.response.send_message("❌ Must be used in a server.", ephemeral=True)
+            return
+        vcs = interaction.guild.voice_channels
+        if not vcs:
+            await interaction.response.send_message("❌ No voice channels found in this server.", ephemeral=True)
+            return
+        view = SelectDestinationVoiceChannelView(vcs, interaction.user.id, self._on_switch_channel_selected)
+        await interaction.response.send_message("🔊 Select the Voice Channel you want to control:", view=view, ephemeral=True)
+
+    async def _on_switch_channel_selected(self, interaction: discord.Interaction, new_vc: discord.VoiceChannel) -> None:
+        self.channel = new_vc
+        await interaction.response.send_message(f"🔄 Switched active control channel to **{new_vc.name}**.", ephemeral=True)
+        await self._refresh_embed(interaction)
+
+    async def _prompt_move_all(self, interaction: discord.Interaction) -> None:
+        """Prompt operator to choose destination VC for Move All action."""
+        if not interaction.guild:
+            await interaction.response.send_message("❌ Must be used in a server.", ephemeral=True)
+            return
+        if not self._has_bot_perm(interaction, "move_members"):
+            await interaction.response.send_message("❌ I need Move Members permission.", ephemeral=True)
+            return
+        candidates = [vc for vc in interaction.guild.voice_channels if not self.channel or vc.id != self.channel.id]
+        if not candidates:
+            await interaction.response.send_message("❌ No alternative destination voice channels available.", ephemeral=True)
+            return
+        view = SelectDestinationVoiceChannelView(candidates, interaction.user.id, self._handle_moveall_confirm)
+        await interaction.response.send_message("➡️ Select destination Voice Channel to move members into:", view=view, ephemeral=True)
+
+    async def _handle_moveall_confirm(self, interaction: discord.Interaction, dest_ch: discord.VoiceChannel) -> None:
+        """Confirm and execute Move All into destination voice channel with visible scope."""
+        channels = await self._get_target_channels(interaction)
+        members_to_move = []
+        for ch in channels:
+            if ch.id == dest_ch.id:
+                continue
+            for m in ch.members:
+                if not self._is_protected_member(m, interaction.guild):
+                    members_to_move.append(m)
+
+        scope_str = "🌐 Entire Server" if self.scope == "entire_server" else "🎯 Current VC"
+        prompt_text = (
+            f"⚠️ Are you sure you want to Move **{len(members_to_move)} members** into **{dest_ch.name}**?\n"
+            f"Target Scope: **{scope_str}**"
+        )
+
+        async def _do_move(btn_interaction: discord.Interaction) -> None:
             count = 0
-            for member in list(vc.members):
-                if self._is_protected_member(member, interaction.guild):
-                    continue
+            for m in members_to_move:
                 try:
-                    await member.edit(mute=True, reason=f"VCPANEL Mute All by {interaction.user}")
+                    await m.move_to(dest_ch, reason=f"VCPANEL Move All by {btn_interaction.user}")
                     count += 1
                 except Exception:
                     pass
+            if not btn_interaction.response.is_done():
+                await btn_interaction.response.send_message(f"➡️ Moved {count} members into {dest_ch.mention}.", ephemeral=True)
+            await self._refresh_embed(btn_interaction)
+
+        confirm = ConfirmBulkActionView(f"Move All -> {dest_ch.name}", dest_ch.name, interaction.user.id, _do_move)
+        await interaction.response.send_message(prompt_text, view=confirm, ephemeral=True)
+
+    async def _prompt_temp_action(self, interaction: discord.Interaction, action_name: str, on_execute) -> None:
+        """Prompt member selection followed by duration selection for temporary voice actions."""
+        async def _on_member_selected(target_interaction: discord.Interaction, target: discord.Member) -> None:
+            if self._is_protected_member(target, target_interaction.guild):
+                await target_interaction.response.send_message("❌ Cannot perform moderation actions on sovereign or protected members.", ephemeral=True)
+                return
+            duration_view = TempDurationSelectView(action_name, target, target_interaction.user.id, on_execute)
+            await target_interaction.response.send_message(
+                f"⏱️ Select duration to **{action_name}** **{target.display_name}**:",
+                view=duration_view,
+                ephemeral=True,
+            )
+
+        prompt_view = SelectTargetMemberView(action_name, interaction.user.id, _on_member_selected)
+        await interaction.response.send_message(
+            f"👤 Please select the target member to **{action_name}**:",
+            view=prompt_view,
+            ephemeral=True,
+        )
+
+    async def _handle_temp_mute_execute(self, interaction: discord.Interaction, target: discord.Member, duration_sec: int, duration_label: str) -> None:
+        if not self._has_bot_perm(interaction, "mute_members"):
+            await interaction.response.send_message("❌ I need Mute Members permission.", ephemeral=True)
+            return
+        if not target.voice:
+            await interaction.response.send_message(f"❌ **{target.display_name}** is not connected to voice.", ephemeral=True)
+            return
+        try:
+            await target.edit(mute=True, reason=f"VCPANEL Temp Mute ({duration_label}) by {interaction.user}")
             if not interaction.response.is_done():
-                await interaction.response.send_message(f"🔇 Muted {count} members.", ephemeral=True)
+                await interaction.response.send_message(f"⏳ Server-muted **{target.display_name}** for **{duration_label}**.", ephemeral=True)
+            else:
+                await interaction.followup.send(f"⏳ Server-muted **{target.display_name}** for **{duration_label}**.", ephemeral=True)
+            asyncio.create_task(self._temp_unmute_after(target, duration_sec))
+            await self._refresh_embed(interaction)
+        except Exception as e:
+            if not interaction.response.is_done():
+                await interaction.response.send_message(f"❌ Failed to temp-mute {target.display_name}: {e}", ephemeral=True)
+            else:
+                await interaction.followup.send(f"❌ Failed to temp-mute {target.display_name}: {e}", ephemeral=True)
+
+    async def _temp_unmute_after(self, target: discord.Member, delay: int) -> None:
+        await asyncio.sleep(delay)
+        try:
+            if target.guild and target.voice:
+                fresh_target = target.guild.get_member(target.id)
+                if fresh_target and fresh_target.voice and fresh_target.voice.mute:
+                    await fresh_target.edit(mute=False, reason="VCPANEL Temp Mute expired")
+        except Exception:
+            pass
+
+    async def _handle_temp_deafen_execute(self, interaction: discord.Interaction, target: discord.Member, duration_sec: int, duration_label: str) -> None:
+        if not self._has_bot_perm(interaction, "deafen_members"):
+            await interaction.response.send_message("❌ I need Deafen Members permission.", ephemeral=True)
+            return
+        if not target.voice:
+            await interaction.response.send_message(f"❌ **{target.display_name}** is not connected to voice.", ephemeral=True)
+            return
+        try:
+            await target.edit(deafen=True, reason=f"VCPANEL Temp Deafen ({duration_label}) by {interaction.user}")
+            if not interaction.response.is_done():
+                await interaction.response.send_message(f"⏱️ Server-deafened **{target.display_name}** for **{duration_label}**.", ephemeral=True)
+            else:
+                await interaction.followup.send(f"⏱️ Server-deafened **{target.display_name}** for **{duration_label}**.", ephemeral=True)
+            asyncio.create_task(self._temp_undeafen_after(target, duration_sec))
+            await self._refresh_embed(interaction)
+        except Exception as e:
+            if not interaction.response.is_done():
+                await interaction.response.send_message(f"❌ Failed to temp-deafen {target.display_name}: {e}", ephemeral=True)
+            else:
+                await interaction.followup.send(f"❌ Failed to temp-deafen {target.display_name}: {e}", ephemeral=True)
+
+    async def _temp_undeafen_after(self, target: discord.Member, delay: int) -> None:
+        await asyncio.sleep(delay)
+        try:
+            if target.guild and target.voice:
+                fresh_target = target.guild.get_member(target.id)
+                if fresh_target and fresh_target.voice and fresh_target.voice.deaf:
+                    await fresh_target.edit(deafen=False, reason="VCPANEL Temp Deafen expired")
+        except Exception:
+            pass
+
+    async def _handle_view_members(self, interaction: discord.Interaction) -> None:
+        """Display all connected members in the target scope."""
+        guild = interaction.guild
+        if not guild:
+            await interaction.response.send_message("❌ Guild context is missing.", ephemeral=True)
+            return
+
+        if self.scope == "entire_server":
+            channels = [vc for vc in guild.voice_channels if vc.members]
+            total_members = sum(len(vc.members) for vc in channels)
+            title = f"👥 Connected Members • Entire Server ({total_members} total across {len(channels)} VCs)"
+            lines = []
+            for ch in channels:
+                lines.append(f"**🔊 {ch.name}** ({len(ch.members)}):")
+                for m in ch.members:
+                    st = []
+                    if m.voice:
+                        if m.voice.mute or m.voice.self_mute:
+                            st.append("🔇 Muted")
+                        if m.voice.deaf or m.voice.self_deaf:
+                            st.append("🔕 Deafened")
+                        if m.voice.self_stream:
+                            st.append("📺 Streaming")
+                        if m.voice.self_video:
+                            st.append("📷 Video")
+                    st_str = f" [{' · '.join(st)}]" if st else ""
+                    lines.append(f"  • {m.display_name} (`{m.id}`){st_str}")
+            desc = "\n".join(lines)[:4000] if lines else "No members are currently in voice channels."
+        else:
+            vc = await self._validate_channel(interaction)
+            if not vc:
+                return
+            title = f"👥 Connected Members • #{vc.name} ({len(vc.members)} total)"
+            lines = []
+            for m in vc.members:
+                st = []
+                if m.voice:
+                    if m.voice.mute or m.voice.self_mute:
+                        st.append("🔇 Muted")
+                    if m.voice.deaf or m.voice.self_deaf:
+                        st.append("🔕 Deafened")
+                    if m.voice.self_stream:
+                        st.append("📺 Streaming")
+                    if m.voice.self_video:
+                        st.append("📷 Video")
+                st_str = f" [{' · '.join(st)}]" if st else ""
+                lines.append(f"• {m.display_name} (`{m.id}`){st_str}")
+            desc = "\n".join(lines)[:4000] if lines else "No members connected in this channel."
+
+        embed = discord.Embed(
+            title=title,
+            description=desc,
+            color=0x2B2D31,
+        )
+        if not interaction.response.is_done():
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        else:
+            await interaction.followup.send(embed=embed, ephemeral=True)
+
+    async def _handle_muteall(self, interaction: discord.Interaction) -> None:
+        async with self._lock:
+            channels = await self._get_target_channels(interaction)
+            if not channels or not self._has_bot_perm(interaction, "mute_members"):
+                await interaction.response.send_message("❌ Missing Mute Members permission or no active channels.", ephemeral=True)
+                return
+            count = 0
+            for ch in channels:
+                for member in list(ch.members):
+                    if self._is_protected_member(member, interaction.guild):
+                        continue
+                    try:
+                        await member.edit(mute=True, reason=f"VCPANEL Mute All by {interaction.user}")
+                        count += 1
+                    except Exception:
+                        pass
+            scope_str = "across entire server" if self.scope == "entire_server" else "in active VC"
+            if not interaction.response.is_done():
+                await interaction.response.send_message(f"🔇 Muted {count} members {scope_str}.", ephemeral=True)
             await self._refresh_embed(interaction)
 
     async def _handle_unmuteall(self, interaction: discord.Interaction) -> None:
         async with self._lock:
-            vc = await self._validate_channel(interaction)
-            if not vc or not self._has_bot_perm(interaction, "mute_members"):
-                await interaction.response.send_message("❌ Missing Mute Members permission.", ephemeral=True)
+            channels = await self._get_target_channels(interaction)
+            if not channels or not self._has_bot_perm(interaction, "mute_members"):
+                await interaction.response.send_message("❌ Missing Mute Members permission or no active channels.", ephemeral=True)
                 return
             count = 0
-            for member in list(vc.members):
-                try:
-                    await member.edit(mute=False, reason=f"VCPANEL Unmute All by {interaction.user}")
-                    count += 1
-                except Exception:
-                    pass
+            for ch in channels:
+                for member in list(ch.members):
+                    try:
+                        await member.edit(mute=False, reason=f"VCPANEL Unmute All by {interaction.user}")
+                        count += 1
+                    except Exception:
+                        pass
+            scope_str = "across entire server" if self.scope == "entire_server" else "in active VC"
             if not interaction.response.is_done():
-                await interaction.response.send_message(f"🔊 Unmuted {count} members.", ephemeral=True)
+                await interaction.response.send_message(f"🔊 Unmuted {count} members {scope_str}.", ephemeral=True)
             await self._refresh_embed(interaction)
 
     async def _handle_deafenall(self, interaction: discord.Interaction) -> None:
         async with self._lock:
-            vc = await self._validate_channel(interaction)
-            if not vc or not self._has_bot_perm(interaction, "deafen_members"):
-                await interaction.response.send_message("❌ Missing Deafen Members permission.", ephemeral=True)
+            channels = await self._get_target_channels(interaction)
+            if not channels or not self._has_bot_perm(interaction, "deafen_members"):
+                await interaction.response.send_message("❌ Missing Deafen Members permission or no active channels.", ephemeral=True)
                 return
             count = 0
-            for member in list(vc.members):
-                if self._is_protected_member(member, interaction.guild):
-                    continue
-                try:
-                    await member.edit(deafen=True, reason=f"VCPANEL Deafen All by {interaction.user}")
-                    count += 1
-                except Exception:
-                    pass
+            for ch in channels:
+                for member in list(ch.members):
+                    if self._is_protected_member(member, interaction.guild):
+                        continue
+                    try:
+                        await member.edit(deafen=True, reason=f"VCPANEL Deafen All by {interaction.user}")
+                        count += 1
+                    except Exception:
+                        pass
+            scope_str = "across entire server" if self.scope == "entire_server" else "in active VC"
             if not interaction.response.is_done():
-                await interaction.response.send_message(f"🔕 Deafened {count} members.", ephemeral=True)
+                await interaction.response.send_message(f"🔕 Deafened {count} members {scope_str}.", ephemeral=True)
             await self._refresh_embed(interaction)
 
     async def _handle_undeafenall(self, interaction: discord.Interaction) -> None:
         async with self._lock:
-            vc = await self._validate_channel(interaction)
-            if not vc or not self._has_bot_perm(interaction, "deafen_members"):
-                await interaction.response.send_message("❌ Missing Deafen Members permission.", ephemeral=True)
+            channels = await self._get_target_channels(interaction)
+            if not channels or not self._has_bot_perm(interaction, "deafen_members"):
+                await interaction.response.send_message("❌ Missing Deafen Members permission or no active channels.", ephemeral=True)
                 return
             count = 0
-            for member in list(vc.members):
-                try:
-                    await member.edit(deafen=False, reason=f"VCPANEL Undeafen All by {interaction.user}")
-                    count += 1
-                except Exception:
-                    pass
+            for ch in channels:
+                for member in list(ch.members):
+                    try:
+                        await member.edit(deafen=False, reason=f"VCPANEL Undeafen All by {interaction.user}")
+                        count += 1
+                    except Exception:
+                        pass
+            scope_str = "across entire server" if self.scope == "entire_server" else "in active VC"
             if not interaction.response.is_done():
-                await interaction.response.send_message(f"🔔 Undeafened {count} members.", ephemeral=True)
+                await interaction.response.send_message(f"🔔 Undeafened {count} members {scope_str}.", ephemeral=True)
             await self._refresh_embed(interaction)
 
     async def _handle_kickall(self, interaction: discord.Interaction) -> None:
         async with self._lock:
-            vc = await self._validate_channel(interaction)
-            if not vc or not self._has_bot_perm(interaction, "move_members"):
-                await interaction.response.send_message("❌ Missing Move Members permission.", ephemeral=True)
+            channels = await self._get_target_channels(interaction)
+            if not channels or not self._has_bot_perm(interaction, "move_members"):
+                await interaction.response.send_message("❌ Missing Move Members permission or no active channels.", ephemeral=True)
                 return
             count = 0
-            for member in list(vc.members):
-                if self._is_protected_member(member, interaction.guild):
-                    continue
-                try:
-                    await member.move_to(None, reason=f"VCPANEL Kick All by {interaction.user}")
-                    count += 1
-                except Exception:
-                    pass
+            for ch in channels:
+                for member in list(ch.members):
+                    if self._is_protected_member(member, interaction.guild):
+                        continue
+                    try:
+                        await member.move_to(None, reason=f"VCPANEL Kick All by {interaction.user}")
+                        count += 1
+                    except Exception:
+                        pass
+            scope_str = "across entire server" if self.scope == "entire_server" else "from active VC"
             if not interaction.response.is_done():
-                await interaction.response.send_message(f"🚪 Disconnected {count} members from VC.", ephemeral=True)
+                await interaction.response.send_message(f"🚪 Disconnected {count} members {scope_str}.", ephemeral=True)
             await self._refresh_embed(interaction)
+
+    async def _handle_rename_room(self, interaction: discord.Interaction) -> None:
+        await interaction.response.send_modal(RenameRoomModal(self))
+
+    async def _handle_create_room(self, interaction: discord.Interaction) -> None:
+        await interaction.response.send_modal(CreateVoiceRoomModal(self))
+
+    async def _handle_move_afk(self, interaction: discord.Interaction) -> None:
+        guild = interaction.guild
+        if not guild:
+            await interaction.response.send_message("❌ Guild context missing.", ephemeral=True)
+            return
+        afk_channel = guild.afk_channel
+        if not afk_channel:
+            await interaction.response.send_message("❌ No AFK voice channel configured on this server.", ephemeral=True)
+            return
+        if not self._has_bot_perm(interaction, "move_members"):
+            await interaction.response.send_message("❌ I need Move Members permission.", ephemeral=True)
+            return
+
+        channels = await self._get_target_channels(interaction)
+        moved = 0
+        for ch in channels:
+            if ch.id == afk_channel.id:
+                continue
+            for m in list(ch.members):
+                if not self._is_protected_member(m, guild):
+                    try:
+                        await m.move_to(afk_channel, reason=f"Moved to AFK by {interaction.user}")
+                        moved += 1
+                    except Exception:
+                        pass
+        await interaction.response.send_message(f"💤 Moved {moved} members to AFK channel {afk_channel.mention}.", ephemeral=True)
+        await self._refresh_embed(interaction)
+
+    async def _handle_delete_room(self, interaction: discord.Interaction) -> None:
+        vc = await self._validate_channel(interaction)
+        if not vc:
+            return
+        if not self._has_bot_perm(interaction, "manage_channels"):
+            await interaction.response.send_message("❌ I need Manage Channels permission.", ephemeral=True)
+            return
+
+        async def _do_delete(btn_interaction: discord.Interaction) -> None:
+            name = vc.name
+            try:
+                await vc.delete(reason=f"VCPANEL Room Deleted by {btn_interaction.user}")
+                other_vcs = [c for c in btn_interaction.guild.voice_channels if c.id != vc.id]
+                self.channel = other_vcs[0] if other_vcs else None
+                await btn_interaction.response.send_message(f"🗑️ Successfully deleted voice channel **{name}**.", ephemeral=True)
+                await self._refresh_embed(btn_interaction)
+            except Exception as e:
+                await btn_interaction.response.send_message(f"❌ Failed to delete voice room: {e}", ephemeral=True)
+
+        confirm = ConfirmBulkActionView(f"Delete Room #{vc.name}", vc.name, interaction.user.id, _do_delete)
+        await interaction.response.send_message(
+            f"⚠️ Are you sure you want to **PERMANENTLY DELETE** voice channel **{vc.name}**?",
+            view=confirm,
+            ephemeral=True,
+        )
+
+    async def _handle_clone_room(self, interaction: discord.Interaction) -> None:
+        vc = await self._validate_channel(interaction)
+        if not vc:
+            return
+        if not self._has_bot_perm(interaction, "manage_channels"):
+            await interaction.response.send_message("❌ I need Manage Channels permission.", ephemeral=True)
+            return
+        try:
+            cloned = await vc.clone(name=f"{vc.name} (Copy)", reason=f"VCPANEL Clone Room by {interaction.user}")
+            await interaction.response.send_message(f"✨ Successfully cloned room to {cloned.mention}.", ephemeral=True)
+            await self._refresh_embed(interaction)
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Failed to clone room: {e}", ephemeral=True)
+
+    async def _handle_open_message_tools(self, interaction: discord.Interaction) -> None:
+        embed = discord.Embed(
+            title="💬 Message Moderation Quick Tools",
+            description=(
+                "Access message management and enforcement directly from the **Message moderation** dropdown:\n\n"
+                "• 🧹 **Purge 10/25/50 Messages**: Bulk purge recent text channel messages instantly\n"
+                "• 🗑️ **Delete Selected Message**: Target an individual message by Discord Message ID\n"
+                "• ⏳ **Timeout Member**: Temporarily isolate a disruptive user for 10 minutes\n"
+                "• 🔓 **Untimeout Member**: Remove active timeout isolation\n"
+                "• 📋 **View Member Mod Info**: Inspect account history, roles, and past infractions\n"
+                "• 🔒 **Lock / Unlock Text Channel**: Toggle channel-wide text chat permissions\n"
+                "• ⏱️ **Set Slowmode**: Cycle rate limits (0s, 5s, 15s, 60s)\n\n"
+                "*All tools adhere strictly to server role hierarchy, owner exemptions, and Discord safety limits.*"
+            ),
+            color=0x2B2D31,
+        )
+        if not interaction.response.is_done():
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        else:
+            await interaction.followup.send(embed=embed, ephemeral=True)
 
     async def _handle_clearbans(self, interaction: discord.Interaction) -> None:
         async with self._lock:
@@ -1774,9 +2407,9 @@ class VCDashboard(commands.Cog):
                     await ctx_or_interaction.send(msg)
                 return
 
-        view = OwnerVCControlView(self.bot, channel)
-        ban_count = await view._get_ban_count()
-        embed = build_owner_vc_embed(channel, ban_count=ban_count)
+        view = OwnerVCControlView(self.bot, channel, scope="current_vc")
+        ban_count = await view._get_ban_count() if channel else 0
+        embed = build_owner_vc_embed(channel, ban_count=ban_count, guild=guild, scope="current_vc")
 
         if isinstance(ctx_or_interaction, discord.Interaction):
             if ctx_or_interaction.response.is_done():
