@@ -1,0 +1,1249 @@
+{
+  "server": {
+    "name": "rf.rai_006's server",
+    "id": 1552400206811631687,
+    "owner_id": 1457380609641938981,
+    "member_count": 3,
+    "created_at": "2026-09-23 19:24:11.505000+00:00",
+    "description": null,
+    "icon": null,
+    "banner": null,
+    "premium_tier": 0,
+    "premium_subscription_count": 0
+  },
+  "bot_permissions": [
+    "create_instant_invite",
+    "kick_members",
+    "ban_members",
+    "administrator",
+    "manage_channels",
+    "manage_guild",
+    "add_reactions",
+    "view_audit_log",
+    "priority_speaker",
+    "stream",
+    "read_messages",
+    "send_messages",
+    "send_tts_messages",
+    "manage_messages",
+    "embed_links",
+    "attach_files",
+    "read_message_history",
+    "mention_everyone",
+    "external_emojis",
+    "view_guild_insights",
+    "connect",
+    "speak",
+    "mute_members",
+    "deafen_members",
+    "move_members",
+    "use_voice_activation",
+    "change_nickname",
+    "manage_nicknames",
+    "manage_roles",
+    "manage_webhooks",
+    "manage_expressions",
+    "use_application_commands",
+    "request_to_speak",
+    "manage_events",
+    "manage_threads",
+    "create_public_threads",
+    "create_private_threads",
+    "external_stickers",
+    "send_messages_in_threads",
+    "use_embedded_activities",
+    "moderate_members",
+    "view_creator_monetization_analytics",
+    "use_soundboard",
+    "create_expressions",
+    "create_events",
+    "use_external_sounds",
+    "send_voice_messages",
+    "set_voice_channel_status",
+    "send_polls",
+    "use_external_apps",
+    "pin_messages",
+    "bypass_slowmode"
+  ],
+  "bot_missing_perms": [
+    "view_channel"
+  ],
+  "roles": [
+    {
+      "name": "\ud83d\udc51 \u2506 \ud835\udc05\ud835\udc0e\ud835\udc14\ud835\udc0d\ud835\udc03\ud835\udc04\ud835\udc11 \ud83c\udf77",
+      "id": 1552400206966956151,
+      "position": 38,
+      "color": "#f1c40f",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 8
+    },
+    {
+      "name": "\u26a1 \u2506 \ud835\udc07\ud835\udc04\ud835\udc00\ud835\udc03 \ud835\udc00\ud835\udc03\ud835\udc0c\ud835\udc08\ud835\udc0d \u26a1",
+      "id": 1552400206966956150,
+      "position": 37,
+      "color": "#e74c3c",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83d\udee1\ufe0f \u2506 \ud835\udc0c\ud835\udc0e\ud835\udc03\ud835\udc04\ud835\udc11\ud835\udc00\ud835\udc13\ud835\udc0e\ud835\udc11 \ud83d\udee1\ufe0f",
+      "id": 1552400206966956149,
+      "position": 36,
+      "color": "#3498db",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 163586054
+    },
+    {
+      "name": "\ud83d\ude80\u30fbBooster",
+      "id": 1552400206966956148,
+      "position": 35,
+      "color": "#ff1493",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 67142144
+    },
+    {
+      "name": "\ud83e\udd16\u30fbBots",
+      "id": 1552400206966956147,
+      "position": 34,
+      "color": "#747d8c",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 51200
+    },
+    {
+      "name": "Zynrax Unbypassable Security\u2122",
+      "id": 1552400206966956146,
+      "position": 33,
+      "color": "#ffffff",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 8
+    },
+    {
+      "name": "\ud83c\udfa7\u30fbDJ",
+      "id": 1552400206966956145,
+      "position": 32,
+      "color": "#a55eea",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 2222085186637377
+    },
+    {
+      "name": "\ud83d\udc96\u30fbRAI FAM",
+      "id": 1552400206966956144,
+      "position": 31,
+      "color": "#ffb8c6",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 3148288
+    },
+    {
+      "name": "\u2728\u30fbVerified",
+      "id": 1552400206966956143,
+      "position": 30,
+      "color": "#00ff88",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 512
+    },
+    {
+      "name": "\u2500\u2500\u2500 MANAGEMENT \u2500\u2500\u2500",
+      "id": 1552400206899839045,
+      "position": 29,
+      "color": "#2f3136",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83d\udee0\ufe0f \u2506 \ud835\udc13\ud835\udc11\ud835\udc08\ud835\udc00\ud835\udc0b \ud835\udc0c\ud835\udc0e\ud835\udc03",
+      "id": 1552400206899839044,
+      "position": 28,
+      "color": "#34495e",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\u2500\u2500\u2500 SPECIAL & ELITE \u2500\u2500\u2500",
+      "id": 1552400206899839043,
+      "position": 27,
+      "color": "#2f3136",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83d\udc8e\u30fbVIP / Elite",
+      "id": 1552400206899839042,
+      "position": 26,
+      "color": "#00d2d3",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83c\udf99\ufe0f\u30fbCinema Host",
+      "id": 1552400206899839041,
+      "position": 25,
+      "color": "#f1c40f",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83c\udfc6\u30fbTournament Champion",
+      "id": 1552400206899839040,
+      "position": 24,
+      "color": "#f1c40f",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\u2500\u2500\u2500 GAME SELECTOR \u2500\u2500\u2500",
+      "id": 1552400206899839039,
+      "position": 23,
+      "color": "#2f3136",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83c\udfaf\u30fbValorant / CS2",
+      "id": 1552400206899839038,
+      "position": 22,
+      "color": "#fa4454",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\u26a1\u30fbBGMI / PUBG",
+      "id": 1552400206899839037,
+      "position": 21,
+      "color": "#e67e22",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83d\udd25\u30fbFree Fire",
+      "id": 1552400206899839036,
+      "position": 20,
+      "color": "#e74c3c",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83c\udfce\ufe0f\u30fbGTA RP",
+      "id": 1552400206824218763,
+      "position": 19,
+      "color": "#3498db",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83d\ude80\u30fbRocket League",
+      "id": 1552400206824218762,
+      "position": 18,
+      "color": "#00cec9",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83d\udce2\u30fbAnnouncements",
+      "id": 1552400206824218761,
+      "position": 17,
+      "color": "#a55eea",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\u2500\u2500\u2500 NOTIFICATIONS \u2500\u2500\u2500",
+      "id": 1552400206824218760,
+      "position": 16,
+      "color": "#2f3136",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83c\udf81\u30fbGiveaways",
+      "id": 1552400206824218759,
+      "position": 15,
+      "color": "#2ecc71",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83c\udfc6\u30fbTournaments",
+      "id": 1552400206824218758,
+      "position": 14,
+      "color": "#e74c3c",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83c\udf7f\u30fbMovie Nights",
+      "id": 1552400206824218757,
+      "position": 13,
+      "color": "#ff4757",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83d\udcfb\u30fbLive DJ & Radio",
+      "id": 1552400206824218756,
+      "position": 12,
+      "color": "#9b59b6",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": true,
+      "permissions_value": 0
+    },
+    {
+      "name": "Royal Gold",
+      "id": 1552400206824218755,
+      "position": 11,
+      "color": "#ffd700",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "Cyber Cyan",
+      "id": 1552400206824218754,
+      "position": 10,
+      "color": "#80d8ff",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "Neon Purple",
+      "id": 1552400206811631696,
+      "position": 9,
+      "color": "#b388ff",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "Sakura Pink",
+      "id": 1552400206811631695,
+      "position": 8,
+      "color": "#ff9aa2",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "\u2500\u2500\u2500 PALETTE COLORS \u2500\u2500\u2500",
+      "id": 1552400206811631694,
+      "position": 7,
+      "color": "#2f3136",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "\u2728\u30fbStarlight Initiate",
+      "id": 1552400206811631693,
+      "position": 6,
+      "color": "#70a1ff",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 137439215616
+    },
+    {
+      "name": "\ud83c\udf38\u30fbAurora Voyager",
+      "id": 1552400206811631692,
+      "position": 5,
+      "color": "#ff758c",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 137506324480
+    },
+    {
+      "name": "\ud83d\udcab\u30fbNebula Elite",
+      "id": 1552400206811631691,
+      "position": 4,
+      "color": "#a55eea",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 137506373632
+    },
+    {
+      "name": "\ud83d\udc51\u30fbCelestial Sovereign",
+      "id": 1552400206811631690,
+      "position": 3,
+      "color": "#ffa502",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 137506373632
+    },
+    {
+      "name": "\u2500\u2500\u2500 ACTIVITY TIERS \u2500\u2500\u2500",
+      "id": 1552400206811631689,
+      "position": 2,
+      "color": "#2f3136",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "KROVEX",
+      "id": 1571600964086013994,
+      "position": 1,
+      "color": "#000000",
+      "is_bot_managed": true,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 19234907613279
+    },
+    {
+      "name": "MusicMaid",
+      "id": 1558929242929102850,
+      "position": 1,
+      "color": "#000000",
+      "is_bot_managed": true,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 8
+    },
+    {
+      "name": "\ud83d\udc8e \u254f \ud835\udce5\u026a\u1d18 \ud835\udd78\u1d07\u1d0d\u0299\u1d07\u0280",
+      "id": 1558273898854744134,
+      "position": 1,
+      "color": "#9b59b6",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83d\udc96 \u254f \ud835\udce1\u1d00\u026a \ud835\udd71\u1d00\u1d0d",
+      "id": 1558273895839309889,
+      "position": 1,
+      "color": "#e91e63",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "\ud83c\udfa7 \u250a In Voice",
+      "id": 1552400206811631688,
+      "position": 1,
+      "color": "#00f0ff",
+      "is_bot_managed": false,
+      "is_default": false,
+      "mentionable": false,
+      "permissions_value": 0
+    },
+    {
+      "name": "@everyone",
+      "id": 1552400206811631687,
+      "position": 0,
+      "color": "#000000",
+      "is_bot_managed": false,
+      "is_default": true,
+      "mentionable": false,
+      "permissions_value": 2222085186637377
+    }
+  ],
+  "categories": [
+    {
+      "name": "\u25c8 \ud835\ude82 \ud835\ude74 \ud835\ude81 \ud835\ude85 \ud835\ude74 \ud835\ude81  \ud835\ude82 \ud835\ude83 \ud835\ude70 \ud835\ude83 \ud835\ude82 \u25c8",
+      "id": 1552400207982100631,
+      "position": 0,
+      "channels": [
+        {
+          "name": "\ud83d\udc65\u30fbAll Members: 39",
+          "id": 1552400207982100632,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\ude82 \ud835\ude74 \ud835\ude81 \ud835\ude85 \ud835\ude74 \ud835\ude81  \ud835\ude82 \ud835\ude83 \ud835\ude70 \ud835\ude83 \ud835\ude82 \u25c8",
+          "category_id": 1552400207982100631,
+          "position": 1
+        },
+        {
+          "name": "\ud83d\udc64\u30fbMembers: 35",
+          "id": 1552400207982100633,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\ude82 \ud835\ude74 \ud835\ude81 \ud835\ude85 \ud835\ude74 \ud835\ude81  \ud835\ude82 \ud835\ude83 \ud835\ude70 \ud835\ude83 \ud835\ude82 \u25c8",
+          "category_id": 1552400207982100631,
+          "position": 2
+        },
+        {
+          "name": "\ud83e\udd16\u30fbBots: 4",
+          "id": 1552400207982100634,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\ude82 \ud835\ude74 \ud835\ude81 \ud835\ude85 \ud835\ude74 \ud835\ude81  \ud835\ude82 \ud835\ude83 \ud835\ude70 \ud835\ude83 \ud835\ude82 \u25c8",
+          "category_id": 1552400207982100631,
+          "position": 3
+        }
+      ]
+    },
+    {
+      "name": "\u25c8 \ud835\udcd8 \ud835\udcdd \ud835\udcd5 \ud835\udcde \ud835\udce1 \ud835\udcdc \ud835\udcd0 \ud835\udce3 \ud835\udcd8 \ud835\udcde \ud835\udcdd \u25c8",
+      "id": 1552400207982100635,
+      "position": 4,
+      "channels": [
+        {
+          "name": "\u2728\u250a\u1d20\u1d07\u0280\u026a\ua730\u028f-\u029c\u1d07\u0280\u1d07",
+          "id": 1552400207982100636,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udcd8 \ud835\udcdd \ud835\udcd5 \ud835\udcde \ud835\udce1 \ud835\udcdc \ud835\udcd0 \ud835\udce3 \ud835\udcd8 \ud835\udcde \ud835\udcdd \u25c8",
+          "category_id": 1552400207982100635,
+          "position": 5
+        },
+        {
+          "name": "\ud83c\udf38\u250a\u1d21\u1d07\u029f\u1d04\u1d0f\u1d0d\u1d07",
+          "id": 1552400207982100637,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udcd8 \ud835\udcdd \ud835\udcd5 \ud835\udcde \ud835\udce1 \ud835\udcdc \ud835\udcd0 \ud835\udce3 \ud835\udcd8 \ud835\udcde \ud835\udcdd \u25c8",
+          "category_id": 1552400207982100635,
+          "position": 6
+        },
+        {
+          "name": "\ud83d\udcdc\u250a\u0280\u1d1c\u029f\u1d07\ua731-\u1d00\u0274\u1d05-\u026a\u0274\ua730\u1d0f",
+          "id": 1552400207982100638,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udcd8 \ud835\udcdd \ud835\udcd5 \ud835\udcde \ud835\udce1 \ud835\udcdc \ud835\udcd0 \ud835\udce3 \ud835\udcd8 \ud835\udcde \ud835\udcdd \u25c8",
+          "category_id": 1552400207982100635,
+          "position": 7
+        },
+        {
+          "name": "\ud83c\udff7\ufe0f\u250a\u0280\u1d0f\u029f\u1d07\ua731",
+          "id": 1552400207982100639,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udcd8 \ud835\udcdd \ud835\udcd5 \ud835\udcde \ud835\udce1 \ud835\udcdc \ud835\udcd0 \ud835\udce3 \ud835\udcd8 \ud835\udcde \ud835\udcdd \u25c8",
+          "category_id": 1552400207982100635,
+          "position": 8
+        },
+        {
+          "name": "\ud83e\udd1d\u250a\u1d18\u1d00\u0280\u1d1b\u0274\u1d07\u0280\ua731\u029c\u026a\u1d18\ua731",
+          "id": 1552400207982100640,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udcd8 \ud835\udcdd \ud835\udcd5 \ud835\udcde \ud835\udce1 \ud835\udcdc \ud835\udcd0 \ud835\udce3 \ud835\udcd8 \ud835\udcde \ud835\udcdd \u25c8",
+          "category_id": 1552400207982100635,
+          "position": 9
+        }
+      ]
+    },
+    {
+      "name": "\u25c8 \ud835\udc02 \ud835\udc0e \ud835\udc0c \ud835\udc0c \ud835\udc14 \uff2e \uff29 \uff34 \uff39 \u25c8",
+      "id": 1552400208363786361,
+      "position": 10,
+      "channels": [
+        {
+          "name": "\ud83d\udcac\u250a\u0262\u1d07\u0274\u1d07\u0280\u1d00\u029f-\u1d04\u029c\u1d00\u1d1b",
+          "id": 1552400208363786362,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udc02 \ud835\udc0e \ud835\udc0c \ud835\udc0c \ud835\udc14 \uff2e \uff29 \uff34 \uff39 \u25c8",
+          "category_id": 1552400208363786361,
+          "position": 11
+        },
+        {
+          "name": "\ud83e\udd16\u250a\u0299\u1d0f\u1d1b-\u1d04\u1d0d\u1d05\ua731",
+          "id": 1552400208363786363,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udc02 \ud835\udc0e \ud835\udc0c \ud835\udc0c \ud835\udc14 \uff2e \uff29 \uff34 \uff39 \u25c8",
+          "category_id": 1552400208363786361,
+          "position": 12
+        },
+        {
+          "name": "\ud83d\udcb8\u250a\u1d0f\u1d21\u1d0f-\u1d00\u0280\u1d04\u1d00\u1d05\u1d07",
+          "id": 1552400208363786364,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udc02 \ud835\udc0e \ud835\udc0c \ud835\udc0c \ud835\udc14 \uff2e \uff29 \uff34 \uff39 \u25c8",
+          "category_id": 1552400208363786361,
+          "position": 13
+        },
+        {
+          "name": "\u2b50\u250a\ua731\u1d1b\u1d00\u0280\u0299\u1d0f\u1d00\u0280\u1d05",
+          "id": 1552400208363786365,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udc02 \ud835\udc0e \ud835\udc0c \ud835\udc0c \ud835\udc14 \uff2e \uff29 \uff34 \uff39 \u25c8",
+          "category_id": 1552400208363786361,
+          "position": 14
+        }
+      ]
+    },
+    {
+      "name": "\u25c8 \u2102 \u211d \ud835\udd3c \ud835\udd38 \ud835\udd4b \ud835\udd46 \u211d  \ud835\udd4a \ud835\udd4b \ud835\udd4c \ud835\udd3b \ud835\udd40 \ud835\udd46 \u25c8",
+      "id": 1552400208363786366,
+      "position": 15,
+      "channels": [
+        {
+          "name": "\ud83d\udcf8\u250a\u1d04\u029f\u026a\u1d18\ua731-\u1d00\u0274\u1d05-\u1d0d\u1d07\u1d05\u026a\u1d00",
+          "id": 1552400208363786367,
+          "type": "TextChannel",
+          "category": "\u25c8 \u2102 \u211d \ud835\udd3c \ud835\udd38 \ud835\udd4b \ud835\udd46 \u211d  \ud835\udd4a \ud835\udd4b \ud835\udd4c \ud835\udd3b \ud835\udd40 \ud835\udd46 \u25c8",
+          "category_id": 1552400208363786366,
+          "position": 16
+        },
+        {
+          "name": "\ud83d\udda5\ufe0f\u250a\ua731\u1d07\u1d1b\u1d1c\u1d18\ua731-\u1d00\u0274\u1d05-\u1d1b\u1d07\u1d04\u029c",
+          "id": 1552400208363786368,
+          "type": "TextChannel",
+          "category": "\u25c8 \u2102 \u211d \ud835\udd3c \ud835\udd38 \ud835\udd4b \ud835\udd46 \u211d  \ud835\udd4a \ud835\udd4b \ud835\udd4c \ud835\udd3b \ud835\udd40 \ud835\udd46 \u25c8",
+          "category_id": 1552400208363786366,
+          "position": 17
+        },
+        {
+          "name": "\ud83c\udfa5 \u250a \ud835\udc11\ud835\udc1e\ud835\udc1c\ud835\udc28\ud835\udc2b\ud835\udc1d\ud835\udc22\ud835\udc27\ud835\udc20 \ud835\udc12\ud835\udc2d\ud835\udc2e\ud835\udc1d\ud835\udc22\ud835\udc28",
+          "id": 1552400208363786369,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \u2102 \u211d \ud835\udd3c \ud835\udd38 \ud835\udd4b \ud835\udd46 \u211d  \ud835\udd4a \ud835\udd4b \ud835\udd4c \ud835\udd3b \ud835\udd40 \ud835\udd46 \u25c8",
+          "category_id": 1552400208363786366,
+          "position": 18
+        }
+      ]
+    },
+    {
+      "name": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+      "id": 1552400208674029568,
+      "position": 20,
+      "channels": [
+        {
+          "name": "\ud83d\udcac\u250a\u0262\u1d00\u1d0d\u026a\u0274\u0262-\u1d04\u029c\u1d00\u1d1b",
+          "id": 1552400208674029569,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+          "category_id": 1552400208674029568,
+          "position": 21
+        },
+        {
+          "name": "\ud83c\udfae\u250a\u029f\ua730\u0262-\u1d0d\u1d00\u1d1b\u1d04\u029c\u1d0d\u1d00\u1d0b\u026a\u0274\u0262",
+          "id": 1552400208674029570,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+          "category_id": 1552400208674029568,
+          "position": 22
+        },
+        {
+          "name": "\u26a1 \u250a \ud835\uddd9\ud835\uddff\ud835\uddf2\ud835\uddf2 \ud835\uddd9\ud835\uddf6\ud835\uddff\ud835\uddf2 \ud835\udde6\ud835\uddfe\ud835\ude02\ud835\uddee\ud835\uddf1",
+          "id": 1552400208674029571,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+          "category_id": 1552400208674029568,
+          "position": 23
+        },
+        {
+          "name": "\u26a1 \u250a \ud835\uddd5\ud835\uddda\ud835\udde0\ud835\udddc \ud835\udde6\ud835\uddfe\ud835\ude02\ud835\uddee\ud835\uddf1",
+          "id": 1552400208674029572,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+          "category_id": 1552400208674029568,
+          "position": 24
+        },
+        {
+          "name": "\u2694\ufe0f \u250a \ud835\udfed\ud835\ude03\ud835\udfed \ud835\uddd7\ud835\ude02\ud835\uddf2\ud835\uddf9 \ud835\uddd4\ud835\uddff\ud835\uddf2\ud835\uddfb\ud835\uddee",
+          "id": 1552400208674029573,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+          "category_id": 1552400208674029568,
+          "position": 25
+        },
+        {
+          "name": "\ud83c\udfaf \u250a \ud835\udde9\ud835\uddee\ud835\uddf9\ud835\uddfc\ud835\uddff\ud835\uddee\ud835\uddfb\ud835\ude01 \ud835\udde5\ud835\uddee\ud835\uddfb\ud835\uddf8\ud835\uddf2\ud835\uddf1",
+          "id": 1552400209118629958,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+          "category_id": 1552400208674029568,
+          "position": 26
+        },
+        {
+          "name": "\ud83d\ude97 \u250a \ud835\uddda\ud835\udde7\ud835\uddd4 \ud835\udde5\ud835\udde3 & \ud835\uddd6\ud835\uddf5\ud835\uddf6\ud835\uddf9\ud835\uddf9",
+          "id": 1552400209118629959,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+          "category_id": 1552400208674029568,
+          "position": 27
+        },
+        {
+          "name": "\ud83c\udfc6 \u250a \ud835\uddd6\ud835\ude02\ud835\ude00\ud835\ude01\ud835\uddfc\ud835\uddfa \ud835\udde6\ud835\uddf0\ud835\uddff\ud835\uddf6\ud835\uddfa\ud835\ude00",
+          "id": 1552400209118629960,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+          "category_id": 1552400208674029568,
+          "position": 28
+        },
+        {
+          "name": "\ud83d\udc51 \u250a \ud835\udde7\ud835\uddfc\ud835\ude02\ud835\uddff\ud835\uddfb\ud835\uddee\ud835\uddfa\ud835\uddf2\ud835\uddfb\ud835\ude01 \ud835\uddd9\ud835\uddf6\ud835\uddfb\ud835\uddee\ud835\uddf9\ud835\ude00",
+          "id": 1552400209118629961,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+          "category_id": 1552400208674029568,
+          "position": 29
+        }
+      ]
+    },
+    {
+      "name": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+      "id": 1552400209118629962,
+      "position": 30,
+      "channels": [
+        {
+          "name": "\ud83c\udf7f\u250a\u1d04\u026a\u0274\u1d07\u1d0d\u1d00-\u1d04\u029c\u1d00\u1d1b",
+          "id": 1552400209118629963,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+          "category_id": 1552400209118629962,
+          "position": 31
+        },
+        {
+          "name": "\ud83c\udfa7\u250a\u1d0d\u1d1c\ua731\u026a\u1d04-\ua731\u029c\u1d00\u0280\u026a\u0274\u0262",
+          "id": 1552400209118629964,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+          "category_id": 1552400209118629962,
+          "position": 32
+        },
+        {
+          "name": "\ud83c\udfac \u250a \ud835\udc74\ud835\udc90\ud835\udc97\ud835\udc8a\ud835\udc86 \ud835\udc77\ud835\udc93\ud835\udc86\ud835\udc8e\ud835\udc8a\ud835\udc86\ud835\udc93\ud835\udc86 \ud835\udc70",
+          "id": 1552400209118629965,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+          "category_id": 1552400209118629962,
+          "position": 33
+        },
+        {
+          "name": "\ud83c\udfac \u250a \ud835\udc74\ud835\udc90\ud835\udc97\ud835\udc8a\ud835\udc86 \ud835\udc77\ud835\udc93\ud835\udc86\ud835\udc8e\ud835\udc8a\ud835\udc86\ud835\udc93\ud835\udc86 \ud835\udc70\ud835\udc70",
+          "id": 1552400209118629966,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+          "category_id": 1552400209118629962,
+          "position": 34
+        },
+        {
+          "name": "\ud83c\udfa7 \u250a \ud835\udfd0\ud835\udfd2/\ud835\udfd5 \ud835\udc0c\ud835\udc2e\ud835\udc2c\ud835\udc22\ud835\udc1c \ud835\udc12\ud835\udc2d\ud835\udc2e\ud835\udc1d\ud835\udc22\ud835\udc28",
+          "id": 1552400209118629967,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+          "category_id": 1552400209118629962,
+          "position": 35
+        },
+        {
+          "name": "\ud83c\udf27\ufe0f \u250a \ud835\udcdc\ud835\udcf2\ud835\udced\ud835\udcf7\ud835\udcf2\ud835\udcf0\ud835\udcf1\ud835\udcfd \ud835\udcdb\ud835\udcf8-\ud835\udcd5\ud835\udcf2",
+          "id": 1552400209345249362,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+          "category_id": 1552400209118629962,
+          "position": 36
+        }
+      ]
+    },
+    {
+      "name": "\u25c8 \ud835\udc0f \ud835\udc11 \uff29 \ud835\udc15 \ud835\udc00 \ud835\udc13 \ud835\udc04  \ud835\udc12 \ud835\udc14 \uff29 \ud835\udc13 \ud835\udc04 \ud835\udc12 \u25c8",
+      "id": 1552400209345249363,
+      "position": 37,
+      "channels": [
+        {
+          "name": "\ud83c\udf9b\ufe0f\u250a\u1d20\u1d0f\u026a\u1d04\u1d07-\u1d04\u1d0f\u0274\u1d1b\u0280\u1d0f\u029f\ua731",
+          "id": 1552400209345249364,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udc0f \ud835\udc11 \uff29 \ud835\udc15 \ud835\udc00 \ud835\udc13 \ud835\udc04  \ud835\udc12 \ud835\udc14 \uff29 \ud835\udc13 \ud835\udc04 \ud835\udc12 \u25c8",
+          "category_id": 1552400209345249363,
+          "position": 38
+        },
+        {
+          "name": "\u2795 \u250a \ud835\udc09\ud835\udc28\ud835\udc22\ud835\udc27 \ud835\udc2d\ud835\udc28 \ud835\udc02\ud835\udc2b\ud835\udc1e\ud835\udc1a\ud835\udc2d\ud835\udc1e \ud835\udc15\ud835\udc02",
+          "id": 1552400209345249365,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udc0f \ud835\udc11 \uff29 \ud835\udc15 \ud835\udc00 \ud835\udc13 \ud835\udc04  \ud835\udc12 \ud835\udc14 \uff29 \ud835\udc13 \ud835\udc04 \ud835\udc12 \u25c8",
+          "category_id": 1552400209345249363,
+          "position": 39
+        }
+      ]
+    },
+    {
+      "name": "\u25c8 \ud835\udc15 \ud835\udc0e \ud835\udc08 \ud835\udc02 \ud835\udc04  \ud835\udc0b \ud835\udc0e \ud835\udc14 \uff2e \ud835\udc06 \ud835\udc04 \u25c8",
+      "id": 1552400209345249366,
+      "position": 40,
+      "channels": [
+        {
+          "name": "\ud83d\udca4 \u250a \ud835\udc00\ud835\udc05\ud835\udc0a / \ud835\udc12\ud835\udc25\ud835\udc1e\ud835\udc1e\ud835\udc29",
+          "id": 1552400209516957808,
+          "type": "VoiceChannel",
+          "category": "\u25c8 \ud835\udc15 \ud835\udc0e \ud835\udc08 \ud835\udc02 \ud835\udc04  \ud835\udc0b \ud835\udc0e \ud835\udc14 \uff2e \ud835\udc06 \ud835\udc04 \u25c8",
+          "category_id": 1552400209345249366,
+          "position": 47
+        }
+      ]
+    },
+    {
+      "name": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+      "id": 1552400209516957809,
+      "position": 48,
+      "channels": [
+        {
+          "name": "\ud83d\udc51\u250a\u1d07x\u1d07\u1d04\u1d1c\u1d1b\u026a\u1d20\u1d07-\u029f\u1d0f\u1d1c\u0274\u0262\u1d07",
+          "id": 1552400209516957810,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+          "category_id": 1552400209516957809,
+          "position": 49
+        },
+        {
+          "name": "\ud83d\udee1\ufe0f\u250a\ua731\u1d1b\u1d00\ua730\ua730-\u1d0f\u1d18\ua731",
+          "id": 1552400209516957811,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+          "category_id": 1552400209516957809,
+          "position": 50
+        },
+        {
+          "name": "\ud83c\udfab\u250a\u1d1b\u026a\u1d04\u1d0b\u1d07\u1d1b\ua731",
+          "id": 1552400209516957812,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+          "category_id": 1552400209516957809,
+          "position": 51
+        },
+        {
+          "name": "\ud83d\udcdd\u250a\u1d0d\u1d0f\u1d05-\u029f\u1d0f\u0262\ua731",
+          "id": 1552400209516957813,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+          "category_id": 1552400209516957809,
+          "position": 52
+        },
+        {
+          "name": "\ud83d\udea8\u250a\ua731\u1d07\u0274\u1d1b\u026a\u0274\u1d07\u029f-\u029f\u1d0f\u0262\ua731",
+          "id": 1552400209516957814,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+          "category_id": 1552400209516957809,
+          "position": 53
+        },
+        {
+          "name": "\ud83d\udccb\u250a\u1d00\u1d1c\u1d05\u026a\u1d1b-\u029f\u1d0f\u0262\ua731",
+          "id": 1552400209516957815,
+          "type": "TextChannel",
+          "category": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+          "category_id": 1552400209516957809,
+          "position": 54
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udccb | RAI REPORTS",
+      "id": 1555798682052337744,
+      "position": 49,
+      "channels": [
+        {
+          "name": "\ud83e\udd16\u30fbbot-report",
+          "id": 1555798683310624819,
+          "type": "TextChannel",
+          "category": "\ud83d\udccb | RAI REPORTS",
+          "category_id": 1555798682052337744,
+          "position": 55
+        },
+        {
+          "name": "\ud83e\udd16\u30fbbot-report",
+          "id": 1555798684770238524,
+          "type": "TextChannel",
+          "category": "\ud83d\udccb | RAI REPORTS",
+          "category_id": 1555798682052337744,
+          "position": 56
+        },
+        {
+          "name": "\ud83d\udea8\u30fbsecurity-report",
+          "id": 1558760044886233138,
+          "type": "TextChannel",
+          "category": "\ud83d\udccb | RAI REPORTS",
+          "category_id": 1555798682052337744,
+          "position": 57
+        }
+      ]
+    }
+  ],
+  "channels": [
+    {
+      "name": "\ud83d\udc65\u30fbAll Members: 39",
+      "id": 1552400207982100632,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\ude82 \ud835\ude74 \ud835\ude81 \ud835\ude85 \ud835\ude74 \ud835\ude81  \ud835\ude82 \ud835\ude83 \ud835\ude70 \ud835\ude83 \ud835\ude82 \u25c8",
+      "category_id": 1552400207982100631,
+      "position": 1
+    },
+    {
+      "name": "\ud83d\udc64\u30fbMembers: 35",
+      "id": 1552400207982100633,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\ude82 \ud835\ude74 \ud835\ude81 \ud835\ude85 \ud835\ude74 \ud835\ude81  \ud835\ude82 \ud835\ude83 \ud835\ude70 \ud835\ude83 \ud835\ude82 \u25c8",
+      "category_id": 1552400207982100631,
+      "position": 2
+    },
+    {
+      "name": "\ud83e\udd16\u30fbBots: 4",
+      "id": 1552400207982100634,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\ude82 \ud835\ude74 \ud835\ude81 \ud835\ude85 \ud835\ude74 \ud835\ude81  \ud835\ude82 \ud835\ude83 \ud835\ude70 \ud835\ude83 \ud835\ude82 \u25c8",
+      "category_id": 1552400207982100631,
+      "position": 3
+    },
+    {
+      "name": "\u2728\u250a\u1d20\u1d07\u0280\u026a\ua730\u028f-\u029c\u1d07\u0280\u1d07",
+      "id": 1552400207982100636,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udcd8 \ud835\udcdd \ud835\udcd5 \ud835\udcde \ud835\udce1 \ud835\udcdc \ud835\udcd0 \ud835\udce3 \ud835\udcd8 \ud835\udcde \ud835\udcdd \u25c8",
+      "category_id": 1552400207982100635,
+      "position": 5
+    },
+    {
+      "name": "\ud83c\udf38\u250a\u1d21\u1d07\u029f\u1d04\u1d0f\u1d0d\u1d07",
+      "id": 1552400207982100637,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udcd8 \ud835\udcdd \ud835\udcd5 \ud835\udcde \ud835\udce1 \ud835\udcdc \ud835\udcd0 \ud835\udce3 \ud835\udcd8 \ud835\udcde \ud835\udcdd \u25c8",
+      "category_id": 1552400207982100635,
+      "position": 6
+    },
+    {
+      "name": "\ud83d\udcdc\u250a\u0280\u1d1c\u029f\u1d07\ua731-\u1d00\u0274\u1d05-\u026a\u0274\ua730\u1d0f",
+      "id": 1552400207982100638,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udcd8 \ud835\udcdd \ud835\udcd5 \ud835\udcde \ud835\udce1 \ud835\udcdc \ud835\udcd0 \ud835\udce3 \ud835\udcd8 \ud835\udcde \ud835\udcdd \u25c8",
+      "category_id": 1552400207982100635,
+      "position": 7
+    },
+    {
+      "name": "\ud83c\udff7\ufe0f\u250a\u0280\u1d0f\u029f\u1d07\ua731",
+      "id": 1552400207982100639,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udcd8 \ud835\udcdd \ud835\udcd5 \ud835\udcde \ud835\udce1 \ud835\udcdc \ud835\udcd0 \ud835\udce3 \ud835\udcd8 \ud835\udcde \ud835\udcdd \u25c8",
+      "category_id": 1552400207982100635,
+      "position": 8
+    },
+    {
+      "name": "\ud83e\udd1d\u250a\u1d18\u1d00\u0280\u1d1b\u0274\u1d07\u0280\ua731\u029c\u026a\u1d18\ua731",
+      "id": 1552400207982100640,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udcd8 \ud835\udcdd \ud835\udcd5 \ud835\udcde \ud835\udce1 \ud835\udcdc \ud835\udcd0 \ud835\udce3 \ud835\udcd8 \ud835\udcde \ud835\udcdd \u25c8",
+      "category_id": 1552400207982100635,
+      "position": 9
+    },
+    {
+      "name": "\ud83d\udcac\u250a\u0262\u1d07\u0274\u1d07\u0280\u1d00\u029f-\u1d04\u029c\u1d00\u1d1b",
+      "id": 1552400208363786362,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udc02 \ud835\udc0e \ud835\udc0c \ud835\udc0c \ud835\udc14 \uff2e \uff29 \uff34 \uff39 \u25c8",
+      "category_id": 1552400208363786361,
+      "position": 11
+    },
+    {
+      "name": "\ud83e\udd16\u250a\u0299\u1d0f\u1d1b-\u1d04\u1d0d\u1d05\ua731",
+      "id": 1552400208363786363,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udc02 \ud835\udc0e \ud835\udc0c \ud835\udc0c \ud835\udc14 \uff2e \uff29 \uff34 \uff39 \u25c8",
+      "category_id": 1552400208363786361,
+      "position": 12
+    },
+    {
+      "name": "\ud83d\udcb8\u250a\u1d0f\u1d21\u1d0f-\u1d00\u0280\u1d04\u1d00\u1d05\u1d07",
+      "id": 1552400208363786364,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udc02 \ud835\udc0e \ud835\udc0c \ud835\udc0c \ud835\udc14 \uff2e \uff29 \uff34 \uff39 \u25c8",
+      "category_id": 1552400208363786361,
+      "position": 13
+    },
+    {
+      "name": "\u2b50\u250a\ua731\u1d1b\u1d00\u0280\u0299\u1d0f\u1d00\u0280\u1d05",
+      "id": 1552400208363786365,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udc02 \ud835\udc0e \ud835\udc0c \ud835\udc0c \ud835\udc14 \uff2e \uff29 \uff34 \uff39 \u25c8",
+      "category_id": 1552400208363786361,
+      "position": 14
+    },
+    {
+      "name": "\ud83d\udcf8\u250a\u1d04\u029f\u026a\u1d18\ua731-\u1d00\u0274\u1d05-\u1d0d\u1d07\u1d05\u026a\u1d00",
+      "id": 1552400208363786367,
+      "type": "TextChannel",
+      "category": "\u25c8 \u2102 \u211d \ud835\udd3c \ud835\udd38 \ud835\udd4b \ud835\udd46 \u211d  \ud835\udd4a \ud835\udd4b \ud835\udd4c \ud835\udd3b \ud835\udd40 \ud835\udd46 \u25c8",
+      "category_id": 1552400208363786366,
+      "position": 16
+    },
+    {
+      "name": "\ud83d\udda5\ufe0f\u250a\ua731\u1d07\u1d1b\u1d1c\u1d18\ua731-\u1d00\u0274\u1d05-\u1d1b\u1d07\u1d04\u029c",
+      "id": 1552400208363786368,
+      "type": "TextChannel",
+      "category": "\u25c8 \u2102 \u211d \ud835\udd3c \ud835\udd38 \ud835\udd4b \ud835\udd46 \u211d  \ud835\udd4a \ud835\udd4b \ud835\udd4c \ud835\udd3b \ud835\udd40 \ud835\udd46 \u25c8",
+      "category_id": 1552400208363786366,
+      "position": 17
+    },
+    {
+      "name": "\ud83c\udfa5 \u250a \ud835\udc11\ud835\udc1e\ud835\udc1c\ud835\udc28\ud835\udc2b\ud835\udc1d\ud835\udc22\ud835\udc27\ud835\udc20 \ud835\udc12\ud835\udc2d\ud835\udc2e\ud835\udc1d\ud835\udc22\ud835\udc28",
+      "id": 1552400208363786369,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \u2102 \u211d \ud835\udd3c \ud835\udd38 \ud835\udd4b \ud835\udd46 \u211d  \ud835\udd4a \ud835\udd4b \ud835\udd4c \ud835\udd3b \ud835\udd40 \ud835\udd46 \u25c8",
+      "category_id": 1552400208363786366,
+      "position": 18
+    },
+    {
+      "name": "\ud83d\udcac\u250a\u0262\u1d00\u1d0d\u026a\u0274\u0262-\u1d04\u029c\u1d00\u1d1b",
+      "id": 1552400208674029569,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+      "category_id": 1552400208674029568,
+      "position": 21
+    },
+    {
+      "name": "\ud83c\udfae\u250a\u029f\ua730\u0262-\u1d0d\u1d00\u1d1b\u1d04\u029c\u1d0d\u1d00\u1d0b\u026a\u0274\u0262",
+      "id": 1552400208674029570,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+      "category_id": 1552400208674029568,
+      "position": 22
+    },
+    {
+      "name": "\u26a1 \u250a \ud835\uddd9\ud835\uddff\ud835\uddf2\ud835\uddf2 \ud835\uddd9\ud835\uddf6\ud835\uddff\ud835\uddf2 \ud835\udde6\ud835\uddfe\ud835\ude02\ud835\uddee\ud835\uddf1",
+      "id": 1552400208674029571,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+      "category_id": 1552400208674029568,
+      "position": 23
+    },
+    {
+      "name": "\u26a1 \u250a \ud835\uddd5\ud835\uddda\ud835\udde0\ud835\udddc \ud835\udde6\ud835\uddfe\ud835\ude02\ud835\uddee\ud835\uddf1",
+      "id": 1552400208674029572,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+      "category_id": 1552400208674029568,
+      "position": 24
+    },
+    {
+      "name": "\u2694\ufe0f \u250a \ud835\udfed\ud835\ude03\ud835\udfed \ud835\uddd7\ud835\ude02\ud835\uddf2\ud835\uddf9 \ud835\uddd4\ud835\uddff\ud835\uddf2\ud835\uddfb\ud835\uddee",
+      "id": 1552400208674029573,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+      "category_id": 1552400208674029568,
+      "position": 25
+    },
+    {
+      "name": "\ud83c\udfaf \u250a \ud835\udde9\ud835\uddee\ud835\uddf9\ud835\uddfc\ud835\uddff\ud835\uddee\ud835\uddfb\ud835\ude01 \ud835\udde5\ud835\uddee\ud835\uddfb\ud835\uddf8\ud835\uddf2\ud835\uddf1",
+      "id": 1552400209118629958,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+      "category_id": 1552400208674029568,
+      "position": 26
+    },
+    {
+      "name": "\ud83d\ude97 \u250a \ud835\uddda\ud835\udde7\ud835\uddd4 \ud835\udde5\ud835\udde3 & \ud835\uddd6\ud835\uddf5\ud835\uddf6\ud835\uddf9\ud835\uddf9",
+      "id": 1552400209118629959,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+      "category_id": 1552400208674029568,
+      "position": 27
+    },
+    {
+      "name": "\ud83c\udfc6 \u250a \ud835\uddd6\ud835\ude02\ud835\ude00\ud835\ude01\ud835\uddfc\ud835\uddfa \ud835\udde6\ud835\uddf0\ud835\uddff\ud835\uddf6\ud835\uddfa\ud835\ude00",
+      "id": 1552400209118629960,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+      "category_id": 1552400208674029568,
+      "position": 28
+    },
+    {
+      "name": "\ud83d\udc51 \u250a \ud835\udde7\ud835\uddfc\ud835\ude02\ud835\uddff\ud835\uddfb\ud835\uddee\ud835\uddfa\ud835\uddf2\ud835\uddfb\ud835\ude01 \ud835\uddd9\ud835\uddf6\ud835\uddfb\ud835\uddee\ud835\uddf9\ud835\ude00",
+      "id": 1552400209118629961,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udd3e \ud835\udd38 \ud835\udd44 \ud835\udd40 \u2115 \ud835\udd3e  \u2124 \ud835\udd46 \u2115 \ud835\udd3c \u25c8",
+      "category_id": 1552400208674029568,
+      "position": 29
+    },
+    {
+      "name": "\ud83c\udf7f\u250a\u1d04\u026a\u0274\u1d07\u1d0d\u1d00-\u1d04\u029c\u1d00\u1d1b",
+      "id": 1552400209118629963,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+      "category_id": 1552400209118629962,
+      "position": 31
+    },
+    {
+      "name": "\ud83c\udfa7\u250a\u1d0d\u1d1c\ua731\u026a\u1d04-\ua731\u029c\u1d00\u0280\u026a\u0274\u0262",
+      "id": 1552400209118629964,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+      "category_id": 1552400209118629962,
+      "position": 32
+    },
+    {
+      "name": "\ud83c\udfac \u250a \ud835\udc74\ud835\udc90\ud835\udc97\ud835\udc8a\ud835\udc86 \ud835\udc77\ud835\udc93\ud835\udc86\ud835\udc8e\ud835\udc8a\ud835\udc86\ud835\udc93\ud835\udc86 \ud835\udc70",
+      "id": 1552400209118629965,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+      "category_id": 1552400209118629962,
+      "position": 33
+    },
+    {
+      "name": "\ud83c\udfac \u250a \ud835\udc74\ud835\udc90\ud835\udc97\ud835\udc8a\ud835\udc86 \ud835\udc77\ud835\udc93\ud835\udc86\ud835\udc8e\ud835\udc8a\ud835\udc86\ud835\udc93\ud835\udc86 \ud835\udc70\ud835\udc70",
+      "id": 1552400209118629966,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+      "category_id": 1552400209118629962,
+      "position": 34
+    },
+    {
+      "name": "\ud83c\udfa7 \u250a \ud835\udfd0\ud835\udfd2/\ud835\udfd5 \ud835\udc0c\ud835\udc2e\ud835\udc2c\ud835\udc22\ud835\udc1c \ud835\udc12\ud835\udc2d\ud835\udc2e\ud835\udc1d\ud835\udc22\ud835\udc28",
+      "id": 1552400209118629967,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+      "category_id": 1552400209118629962,
+      "position": 35
+    },
+    {
+      "name": "\ud83c\udf27\ufe0f \u250a \ud835\udcdc\ud835\udcf2\ud835\udced\ud835\udcf7\ud835\udcf2\ud835\udcf0\ud835\udcf1\ud835\udcfd \ud835\udcdb\ud835\udcf8-\ud835\udcd5\ud835\udcf2",
+      "id": 1552400209345249362,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udc00 \ud835\udc02 \ud835\udc0e \ud835\udc14 \ud835\udc12 \ud835\udc13 \uff29 \ud835\udc02  &  \ud835\udc02 \uff29 \uff2e \uff25 \uff2d \ud835\udc00 \u25c8",
+      "category_id": 1552400209118629962,
+      "position": 36
+    },
+    {
+      "name": "\ud83c\udf9b\ufe0f\u250a\u1d20\u1d0f\u026a\u1d04\u1d07-\u1d04\u1d0f\u0274\u1d1b\u0280\u1d0f\u029f\ua731",
+      "id": 1552400209345249364,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udc0f \ud835\udc11 \uff29 \ud835\udc15 \ud835\udc00 \ud835\udc13 \ud835\udc04  \ud835\udc12 \ud835\udc14 \uff29 \ud835\udc13 \ud835\udc04 \ud835\udc12 \u25c8",
+      "category_id": 1552400209345249363,
+      "position": 38
+    },
+    {
+      "name": "\u2795 \u250a \ud835\udc09\ud835\udc28\ud835\udc22\ud835\udc27 \ud835\udc2d\ud835\udc28 \ud835\udc02\ud835\udc2b\ud835\udc1e\ud835\udc1a\ud835\udc2d\ud835\udc1e \ud835\udc15\ud835\udc02",
+      "id": 1552400209345249365,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udc0f \ud835\udc11 \uff29 \ud835\udc15 \ud835\udc00 \ud835\udc13 \ud835\udc04  \ud835\udc12 \ud835\udc14 \uff29 \ud835\udc13 \ud835\udc04 \ud835\udc12 \u25c8",
+      "category_id": 1552400209345249363,
+      "position": 39
+    },
+    {
+      "name": "\ud83d\udca4 \u250a \ud835\udc00\ud835\udc05\ud835\udc0a / \ud835\udc12\ud835\udc25\ud835\udc1e\ud835\udc1e\ud835\udc29",
+      "id": 1552400209516957808,
+      "type": "VoiceChannel",
+      "category": "\u25c8 \ud835\udc15 \ud835\udc0e \ud835\udc08 \ud835\udc02 \ud835\udc04  \ud835\udc0b \ud835\udc0e \ud835\udc14 \uff2e \ud835\udc06 \ud835\udc04 \u25c8",
+      "category_id": 1552400209345249366,
+      "position": 47
+    },
+    {
+      "name": "\ud83d\udc51\u250a\u1d07x\u1d07\u1d04\u1d1c\u1d1b\u026a\u1d20\u1d07-\u029f\u1d0f\u1d1c\u0274\u0262\u1d07",
+      "id": 1552400209516957810,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+      "category_id": 1552400209516957809,
+      "position": 49
+    },
+    {
+      "name": "\ud83d\udee1\ufe0f\u250a\ua731\u1d1b\u1d00\ua730\ua730-\u1d0f\u1d18\ua731",
+      "id": 1552400209516957811,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+      "category_id": 1552400209516957809,
+      "position": 50
+    },
+    {
+      "name": "\ud83c\udfab\u250a\u1d1b\u026a\u1d04\u1d0b\u1d07\u1d1b\ua731",
+      "id": 1552400209516957812,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+      "category_id": 1552400209516957809,
+      "position": 51
+    },
+    {
+      "name": "\ud83d\udcdd\u250a\u1d0d\u1d0f\u1d05-\u029f\u1d0f\u0262\ua731",
+      "id": 1552400209516957813,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+      "category_id": 1552400209516957809,
+      "position": 52
+    },
+    {
+      "name": "\ud83d\udea8\u250a\ua731\u1d07\u0274\u1d1b\u026a\u0274\u1d07\u029f-\u029f\u1d0f\u0262\ua731",
+      "id": 1552400209516957814,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+      "category_id": 1552400209516957809,
+      "position": 53
+    },
+    {
+      "name": "\ud83d\udccb\u250a\u1d00\u1d1c\u1d05\u026a\u1d1b-\u029f\u1d0f\u0262\ua731",
+      "id": 1552400209516957815,
+      "type": "TextChannel",
+      "category": "\u25c8 \ud835\udd16 \ud835\udd17 \ud835\udd04 \ud835\udd09 \ud835\udd09  \u210c \ud835\udd14 \u25c8",
+      "category_id": 1552400209516957809,
+      "position": 54
+    },
+    {
+      "name": "\ud83e\udd16\u30fbbot-report",
+      "id": 1555798683310624819,
+      "type": "TextChannel",
+      "category": "\ud83d\udccb | RAI REPORTS",
+      "category_id": 1555798682052337744,
+      "position": 55
+    },
+    {
+      "name": "\ud83e\udd16\u30fbbot-report",
+      "id": 1555798684770238524,
+      "type": "TextChannel",
+      "category": "\ud83d\udccb | RAI REPORTS",
+      "category_id": 1555798682052337744,
+      "position": 56
+    },
+    {
+      "name": "\ud83d\udea8\u30fbsecurity-report",
+      "id": 1558760044886233138,
+      "type": "TextChannel",
+      "category": "\ud83d\udccb | RAI REPORTS",
+      "category_id": 1555798682052337744,
+      "position": 57
+    }
+  ]
+}

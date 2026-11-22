@@ -1,0 +1,42 @@
+{
+  "guild_id": 1552400206811631687,
+  "guild_name": "KROVEX VAULT",
+  "categories": {
+    "VAULT STORAGE": 1571602381001461921,
+    "MONITORING CENTER": 1571604192601313311,
+    "DISASTER RECOVERY": 1571604206765478048,
+    "OWNER CONTROL": 1571604241385267321
+  },
+  "channels": {
+    "\u30fbautomatic-backups": 1571603271137890364,
+    "\ud83d\udcbe\u250aautomatic-backups": 1571603271137890364,
+    "\u30fbmanual-backups": 1571603993506087082,
+    "\ud83d\udce6\u250amanual-backups": 1571603993506087082,
+    "\u30fbpre-update-backups": 1571603995741655050,
+    "\u26a1\u250apre-update-backups": 1571603995741655050,
+    "\u30fbdatabase-snapshots": 1571603998224552099,
+    "\ud83d\uddc4\ufe0f\u250adatabase-snapshots": 1571603998224552099,
+    "\u30fbproject-archives": 1571604000833536001,
+    "\ud83d\udcc1\u250aproject-archives": 1571604000833536001,
+    "\u30fbbackup-dashboard": 1571604196304752641,
+    "\ud83d\udcca\u250abackup-dashboard": 1571604196304752641,
+    "\u30fbbackup-reports": 1571604198594973706,
+    "\ud83d\udcdc\u250abackup-reports": 1571604198594973706,
+    "\u30fbbackup-failures": 1571604201237127250,
+    "\ud83d\udea8\u250abackup-failures": 1571604201237127250,
+    "\u30fbstorage-monitor": 1571604203153916037,
+    "\ud83d\udcc8\u250astorage-monitor": 1571604203153916037,
+    "\u30fbrestore-history": 1571604208946520095,
+    "\u23f3\u250arestore-history": 1571604208946520095,
+    "\u30fbintegrity-checks": 1571604213686075524,
+    "\ud83d\udee1\ufe0f\u250aintegrity-checks": 1571604213686075524,
+    "\u30fbrecovery-reports": 1571604222787715176,
+    "\ud83d\udcd1\u250arecovery-reports": 1571604222787715176,
+    "\u30fbvault-commands": 1571604254517493824,
+    "\ud83d\udc51\u250avault-commands": 1571604254517493824,
+    "\u30fbvault-security": 1571604264822767666,
+    "\ud83d\udd12\u250avault-security": 1571604264822767666,
+    "\u30fbvault-audit": 1571604267217850438,
+    "\ud83d\udccb\u250avault-audit": 1571604267217850438
+  }
+}

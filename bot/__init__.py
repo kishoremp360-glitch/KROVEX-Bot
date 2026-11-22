@@ -1,0 +1,2 @@
+"""Death Bot root package."""
+

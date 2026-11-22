@@ -1,0 +1,95 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables & secrets (NEVER COMMIT)
+.env
+.env.*
+!.env.example
+secrets.json
+token.txt
+*.key
+.vault_key
+vault_key.bin
+
+# IDE & Editor settings
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
+
+# Logs
+logs/
+*.log
+
+# Backups
+backup*/
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Temporary audio files / FFmpeg downloads
+temp_audio/
+*.mp3
+*.wav
+*.opus
+*.m4a
+
+# SQLite runtime databases and journal/WAL files
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.db-wal
+*.db-shm
+db/*.sqlite*
+db/backups/
+!tests/fixtures/**
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Scratch inspection files
+scratch/
+
+
